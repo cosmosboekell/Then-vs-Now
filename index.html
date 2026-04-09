@@ -3,322 +3,557 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Then vs. Now: The Office of Calculation</title>
+  <title>The Office of Calculation: From Clerks to Code</title>
   <style>
     :root {
-      --bg: #f6f1e7;
-      --paper: #fffaf0;
-      --ink: #2a241d;
-      --muted: #6c6257;
-      --accent: #8b5e34;
-      --accent2: #4f6d7a;
-      --border: #d9cdbd;
-      --stamp: #a33c2f;
-      --shadow: rgba(60, 40, 20, 0.10);
+      --bg: #f3eadb;
+      --paper: #fff9f0;
+      --paper-2: #f8efdf;
+      --ink: #2d241d;
+      --muted: #6d6258;
+      --line: #d8c8b2;
+      --accent: #8a5a32;
+      --accent-2: #486372;
+      --stamp: #a6382e;
+      --ok: #52704a;
+      --warn: #8a6a29;
+      --bad: #8a3f31;
+      --shadow: rgba(68, 43, 20, 0.12);
+      --glow: rgba(138, 90, 50, 0.18);
     }
 
     body.babbage {
-      --bg: #eceff3;
-      --paper: #ffffff;
-      --ink: #1d2430;
-      --muted: #4e5a6a;
-      --accent: #2f4f6f;
-      --accent2: #7d8fa3;
-      --border: #cdd6df;
-      --stamp: #28435c;
-      --shadow: rgba(20, 30, 50, 0.08);
+      --bg: #e9edf2;
+      --paper: #fcfdff;
+      --paper-2: #f4f7fb;
+      --ink: #1f2a37;
+      --muted: #5a6a7f;
+      --line: #ced8e3;
+      --accent: #2d5575;
+      --accent-2: #6a7e92;
+      --stamp: #254a67;
+      --ok: #446356;
+      --warn: #8b6d34;
+      --bad: #8a413c;
+      --shadow: rgba(20, 40, 60, 0.10);
+      --glow: rgba(45, 85, 117, 0.18);
     }
 
     body.jones {
-      --bg: #f8efe3;
-      --paper: #fffaf4;
-      --ink: #2f241f;
-      --muted: #705f55;
-      --accent: #9b4d3a;
-      --accent2: #6b7d52;
-      --border: #dbcab6;
-      --stamp: #b03b2e;
-      --shadow: rgba(70, 30, 10, 0.12);
+      --bg: #f7ecdc;
+      --paper: #fff9f2;
+      --paper-2: #fff2e8;
+      --ink: #34251f;
+      --muted: #715e55;
+      --line: #dcc7b0;
+      --accent: #9a4d39;
+      --accent-2: #5f7551;
+      --stamp: #b33d31;
+      --ok: #55714c;
+      --warn: #8d6c2f;
+      --bad: #9a4636;
+      --shadow: rgba(90, 38, 18, 0.13);
+      --glow: rgba(154, 77, 57, 0.18);
     }
 
     * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
 
     body {
       margin: 0;
+      color: var(--ink);
       background:
-        radial-gradient(circle at top left, rgba(255,255,255,0.35), transparent 30%),
+        radial-gradient(circle at 15% 10%, rgba(255,255,255,0.45), transparent 18%),
+        radial-gradient(circle at 85% 20%, rgba(255,255,255,0.25), transparent 16%),
         repeating-linear-gradient(
           0deg,
           transparent,
-          transparent 28px,
-          rgba(0,0,0,0.015) 29px
+          transparent 33px,
+          rgba(0,0,0,0.02) 34px
         ),
         var(--bg);
-      color: var(--ink);
       font-family: Georgia, "Times New Roman", serif;
-      line-height: 1.6;
-      transition: background 0.3s, color 0.3s;
+      transition: background 0.25s, color 0.25s;
     }
 
     .container {
-      max-width: 1080px;
+      max-width: 1280px;
       margin: 0 auto;
-      padding: 28px 18px 56px;
+      padding: 24px 16px 60px;
     }
 
-    .header-card, .section {
-      background: var(--paper);
-      border: 1px solid var(--border);
+    .card {
+      background: linear-gradient(180deg, var(--paper), var(--paper-2));
+      border: 1px solid var(--line);
       border-radius: 18px;
       box-shadow: 0 8px 24px var(--shadow);
     }
 
-    .header-card {
-      padding: 28px;
-      margin-bottom: 22px;
+    .header {
+      padding: 26px;
+      margin-bottom: 18px;
       position: relative;
       overflow: hidden;
     }
 
-    .header-card::after {
-      content: "WEEK 3";
+    .header::before {
+      content: "";
       position: absolute;
-      top: 20px;
-      right: 20px;
-      border: 2px solid var(--stamp);
-      color: var(--stamp);
-      padding: 6px 10px;
-      border-radius: 6px;
-      font-size: 0.82rem;
-      letter-spacing: 0.08em;
-      transform: rotate(-7deg);
-      opacity: 0.85;
+      inset: 0;
+      background:
+        linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.22) 48%, transparent 60%);
+      pointer-events: none;
     }
 
-    h1, h2, h3 {
-      line-height: 1.15;
+    .title-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    h1, h2, h3, h4 {
+      line-height: 1.12;
       margin-top: 0;
     }
 
     h1 {
-      font-size: 2.5rem;
-      margin-bottom: 0.4rem;
+      font-size: 2.7rem;
+      margin-bottom: 0.35rem;
+      letter-spacing: -0.02em;
     }
 
     .subtitle {
-      font-size: 1.08rem;
+      max-width: 880px;
       color: var(--muted);
-      max-width: 850px;
+      font-size: 1.07rem;
+      margin: 0 0 12px;
+    }
+
+    .stamp {
+      align-self: flex-start;
+      padding: 8px 12px;
+      border: 2px solid var(--stamp);
+      color: var(--stamp);
+      border-radius: 8px;
+      transform: rotate(-7deg);
+      font-size: 0.84rem;
+      letter-spacing: 0.08em;
+      background: rgba(255,255,255,0.35);
+      white-space: nowrap;
     }
 
     .toolbar {
       display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 18px;
-    }
-
-    .section {
-      padding: 22px;
-      margin: 18px 0;
-      position: relative;
-    }
-
-    .section-title {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .badge {
-      font-size: 0.8rem;
-      color: var(--muted);
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 4px 10px;
-      background: rgba(255,255,255,0.4);
-    }
-
-    .memo {
-      background: linear-gradient(to bottom, rgba(255,255,255,0.3), rgba(0,0,0,0.01));
-      border-left: 6px solid var(--accent);
-      border-radius: 12px;
-      padding: 16px;
-      white-space: pre-wrap;
-      min-height: 170px;
-    }
-
-    .roles-grid, .compare-grid, .control-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
-    }
-
-    .role-card, .mini-card, .control-card, .note-card {
-      background: rgba(255,255,255,0.55);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.04);
-    }
-
-    .role-card {
-      display: none;
-    }
-
-    .role-card.visible {
-      display: block;
-    }
-
-    .role-card strong {
-      color: var(--accent);
-    }
-
-    .controls-row {
-      display: flex;
       flex-wrap: wrap;
       gap: 10px;
-      margin: 12px 0 0;
+      margin-top: 8px;
     }
 
-    label {
-      font-weight: bold;
-      display: block;
-      margin-bottom: 6px;
-    }
-
-    input[type="number"] {
-      width: 140px;
-      padding: 10px 12px;
-      font-size: 1rem;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      background: #fff;
-      color: var(--ink);
-    }
-
-    button {
+    button, .buttonish {
       appearance: none;
-      border: 1px solid rgba(0,0,0,0.08);
-      background: var(--ink);
-      color: white;
-      padding: 10px 14px;
+      border: none;
       border-radius: 12px;
-      cursor: pointer;
+      padding: 10px 14px;
       font-size: 0.96rem;
       font-family: inherit;
+      cursor: pointer;
+      background: var(--ink);
+      color: white;
       box-shadow: 0 4px 10px rgba(0,0,0,0.12);
       transition: transform 0.12s ease, opacity 0.12s ease, background 0.2s ease;
     }
 
-    button:hover {
-      transform: translateY(-1px);
-      opacity: 0.95;
+    button:hover { transform: translateY(-1px); opacity: 0.96; }
+    button.alt { background: var(--accent); }
+    button.soft { background: var(--accent-2); }
+    button.warn { background: var(--warn); }
+    button.bad { background: var(--bad); }
+
+    .meta-bar {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 0.92rem;
     }
 
-    button.alt {
-      background: var(--accent);
+    .pill {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: rgba(255,255,255,0.45);
     }
 
-    button.soft {
-      background: var(--accent2);
-    }
-
-    .output-panel {
-      margin-top: 16px;
+    .three-panel {
       display: grid;
-      grid-template-columns: 1.25fr 0.75fr;
-      gap: 14px;
+      grid-template-columns: 1.05fr 1.1fr 1.05fr;
+      gap: 16px;
+      margin-top: 16px;
     }
 
-    .output, .status-log {
-      background: #f7f5f1;
-      border: 1px solid var(--border);
+    .panel {
+      padding: 18px;
+      min-height: 520px;
+      position: relative;
+    }
+
+    .panel h2 {
+      margin-bottom: 0.5rem;
+    }
+
+    .panel-sub {
+      color: var(--muted);
+      margin: 0 0 12px;
+      font-size: 0.95rem;
+    }
+
+    .memo-box, .machine-box, .ledger-box, .note-box, .archive-box {
+      background: rgba(255,255,255,0.48);
+      border: 1px solid var(--line);
       border-radius: 14px;
       padding: 14px;
-      min-height: 180px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
+    }
+
+    .memo-box {
+      white-space: pre-wrap;
+      border-left: 6px solid var(--accent);
+      min-height: 150px;
+      margin-bottom: 14px;
+    }
+
+    .roles {
+      display: grid;
+      gap: 10px;
+    }
+
+    .role {
+      display: grid;
+      grid-template-columns: 14px 1fr;
+      gap: 10px;
+      align-items: start;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.52);
+      opacity: 0.38;
+      transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+
+    .role.visible { opacity: 1; }
+    .role.active {
+      transform: translateY(-1px);
+      box-shadow: 0 0 0 3px var(--glow);
+      opacity: 1;
+    }
+
+    .role-light {
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      background: #bbb;
+      margin-top: 4px;
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.5);
+    }
+
+    .role.active .role-light { background: var(--accent); }
+    .role h4 {
+      margin: 0 0 4px;
+      color: var(--accent);
+      font-size: 1rem;
+    }
+
+    .office-controls, .machine-controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .ledger-box {
+      min-height: 300px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ledger-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .ledger-scroll {
+      min-height: 165px;
+      max-height: 260px;
+      overflow: auto;
+      padding-right: 6px;
+    }
+
+    .entry {
+      display: grid;
+      grid-template-columns: 54px 1fr 110px;
+      gap: 10px;
+      align-items: center;
+      border-bottom: 1px dashed var(--line);
+      padding: 8px 2px;
+      font-size: 0.96rem;
+    }
+
+    .entry:last-child { border-bottom: none; }
+    .entry .term {
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .entry .value {
+      font-family: "Courier New", monospace;
+      font-size: 1rem;
+    }
+
+    .mark {
+      justify-self: end;
+      font-size: 0.76rem;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.55);
+      color: var(--muted);
+    }
+
+    .mark.ok { color: var(--ok); }
+    .mark.warn { color: var(--warn); }
+    .mark.bad { color: var(--bad); }
+
+    .branch-box {
+      margin-top: 14px;
+    }
+
+    .branch-track {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 12px;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .branch-node {
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.62);
+      font-size: 0.9rem;
+      position: relative;
+    }
+
+    .branch-node::after {
+      content: "";
+      position: absolute;
+      right: -12px;
+      top: 50%;
+      width: 10px;
+      height: 1px;
+      background: var(--line);
+      transform: translateY(-50%);
+    }
+
+    .branch-node:last-child::after { display: none; }
+
+    .branch-node.standard { border-color: var(--accent-2); }
+    .branch-node.changed { border-color: var(--warn); }
+    .branch-node.disputed { border-color: var(--bad); }
+    .branch-node.accident { border-color: var(--accent); }
+
+    .machine-box {
+      min-height: 190px;
+      margin-bottom: 14px;
+    }
+
+    .machine-state {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 10px 0 14px;
+    }
+
+    .register {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.62);
+      padding: 10px;
+    }
+
+    .register-label {
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .register-value {
+      font-family: "Courier New", monospace;
+      font-size: 1.1rem;
+      min-height: 24px;
+    }
+
+    .tape {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      min-height: 58px;
+      align-items: center;
+    }
+
+    .tape-cell {
+      min-width: 40px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.7);
+      font-family: "Courier New", monospace;
+      text-align: center;
+    }
+
+    .tape-cell.head {
+      box-shadow: 0 0 0 3px var(--glow);
+      border-color: var(--accent);
+    }
+
+    .play-box {
+      display: grid;
+      gap: 12px;
+    }
+
+    .step-status, .output, .archive-log, .marginalia {
+      background: rgba(255,255,255,0.5);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .step-status {
+      color: var(--muted);
+      min-height: 66px;
     }
 
     .output {
       font-family: "Courier New", monospace;
+      min-height: 115px;
       white-space: pre-wrap;
     }
 
-    .status-log h3 {
-      margin-bottom: 8px;
+    .archive-log {
+      min-height: 200px;
+      max-height: 290px;
+      overflow: auto;
     }
 
-    .status-list {
+    .archive-log ul {
       margin: 0;
       padding-left: 18px;
-      color: var(--muted);
     }
 
-    .stamp {
-      display: inline-block;
-      margin-top: 10px;
-      border: 2px solid var(--stamp);
-      color: var(--stamp);
-      border-radius: 8px;
-      padding: 4px 10px;
-      transform: rotate(-4deg);
-      font-size: 0.85rem;
-      letter-spacing: 0.05em;
+    .archive-log li {
+      margin-bottom: 8px;
+      color: var(--muted);
     }
 
     .marginalia {
-      font-size: 0.92rem;
-      color: var(--muted);
-      border-top: 1px dashed var(--border);
-      margin-top: 14px;
-      padding-top: 12px;
       font-style: italic;
-    }
-
-    .compare-grid {
+      color: var(--muted);
       margin-top: 12px;
     }
 
-    .note-card {
-      background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(0,0,0,0.015));
+    .summary-section {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 16px;
     }
 
-    footer {
-      margin-top: 28px;
-      color: var(--muted);
-      font-size: 0.95rem;
+    .summary-card {
+      padding: 18px;
+    }
+
+    .compare-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .mini {
+      background: rgba(255,255,255,0.56);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .mini h4 {
+      margin-bottom: 0.35rem;
+      color: var(--accent);
+    }
+
+    .footer {
       text-align: center;
+      color: var(--muted);
+      font-size: 0.94rem;
+      margin-top: 24px;
     }
 
-    @media (max-width: 840px) {
-      .roles-grid, .compare-grid, .control-grid, .output-panel {
+    @media (max-width: 1060px) {
+      .three-panel, .summary-section {
         grid-template-columns: 1fr;
       }
+      .panel { min-height: auto; }
+    }
+
+    @media (max-width: 680px) {
+      h1 { font-size: 2.1rem; }
+      .entry { grid-template-columns: 48px 1fr; }
+      .entry .mark { grid-column: 2; justify-self: start; }
+      .machine-state, .compare-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body class="jones">
   <div class="container">
-    <section class="header-card">
-      <h1>Then vs. Now: The Office of Calculation</h1>
-      <p class="subtitle">
-        I began with Fibonacci, but the real issue is what changes when calculation moves from a staff of human computers to a formal program. This artifact compares these two forms and asks whether programming actually removes ambiguity and human judgment, or merely hides them in another language.
-      </p>
+    <section class="card header">
+      <div class="title-row">
+        <div>
+          <h1>The Office of Calculation: From Clerks to Code</h1>
+          <p class="subtitle">
+            I began with Fibonacci, but the real issue is what changes when calculation moves from a staff of human computers to a formal program. This artifact compares those worlds and asks whether programming removes ambiguity and human judgment, or merely hides and redistributes them in another language.
+          </p>
+        </div>
+        <div class="stamp" id="mainStamp">PROVISIONALLY ACCEPTED</div>
+      </div>
+
       <div class="toolbar">
-        <button class="alt" onclick="setMode('babbage')">Switch to Babbage Mode</button>
-        <button class="soft" onclick="setMode('jones')">Switch to Jones Mode</button>
+        <button class="alt" onclick="setMode('babbage')">Babbage Mode</button>
+        <button class="soft" onclick="setMode('jones')">Jones Mode</button>
         <button onclick="setMode('neutral')">Neutral Mode</button>
+      </div>
+
+      <div class="meta-bar">
+        <span class="pill">Week 3: Computer Programming</span>
+        <span class="pill">human computers → formal programs</span>
+        <span class="pill">ambiguity, verification, drift, accident</span>
       </div>
     </section>
 
-    <section class="section">
-      <div class="section-title">
-        <h2>1. Office Memorandum</h2>
-        <span class="badge">calculation as management</span>
-      </div>
-      <div class="memo">
+    <section class="three-panel">
+      <div class="card panel">
+        <h2>Human Office</h2>
+        <p class="panel-sub">Calculation as management, memory, hierarchy, and verification.</p>
+
+        <div class="memo-box">
 Office of Sequential Calculation
 Instructions for the Production of Fibonacci Numbers
 
@@ -328,123 +563,188 @@ Term 1 = 0
 Term 2 = 1
 
 For each succeeding term, the following division of labor shall be observed.
+        </div>
+
+        <div class="roles" id="rolesBox">
+          <div class="role" id="role1">
+            <div class="role-light"></div>
+            <div><h4>Clerk A: Keeper of the Previous Term</h4>Retains the older of the two most recent values.</div>
+          </div>
+          <div class="role" id="role2">
+            <div class="role-light"></div>
+            <div><h4>Clerk B: Keeper of the Current Term</h4>Retains the newer of the two most recent values.</div>
+          </div>
+          <div class="role" id="role3">
+            <div class="role-light"></div>
+            <div><h4>Clerk C: Summation Clerk</h4>Adds the values supplied by Clerk A and Clerk B and enters the next term.</div>
+          </div>
+          <div class="role" id="role4">
+            <div class="role-light"></div>
+            <div><h4>Clerk D: Verifying Clerk</h4>Confirms that the new value equals the sum of the previous two values before it advances.</div>
+          </div>
+          <div class="role" id="role5">
+            <div class="role-light"></div>
+            <div><h4>Clerk E: Advancement Clerk</h4>Updates the ledger and restores order after dispute or correction.</div>
+          </div>
+        </div>
+
+        <div class="office-controls">
+          <button class="alt" onclick="showNextRole()">Show office roles</button>
+          <button class="soft" onclick="resetRoles()">Reset roles</button>
+          <button class="bad" onclick="disputeResult()">Dispute the Result</button>
+          <button class="warn" onclick="happyAccident()">Happy Accident</button>
+        </div>
+
+        <div class="marginalia" id="memoNote">
+          Marginal note: In a human office, memory and verification must be assigned to people, not hidden inside variables.
+        </div>
       </div>
 
-      <div class="controls-row">
-        <button class="alt" onclick="showNextRole()">Show office roles</button>
-        <button class="soft" onclick="resetRoles()">Reset roles</button>
+      <div class="card panel">
+        <h2>Ledger</h2>
+        <p class="panel-sub">The central record where results are entered, stamped, revised, or contested.</p>
+
+        <div class="ledger-box">
+          <div class="ledger-header">
+            <strong>Ledger of Terms</strong>
+            <span class="pill" id="ledgerModePill">Jones mode</span>
+          </div>
+          <div class="ledger-scroll" id="ledgerEntries">
+            <div class="entry">
+              <div class="term">T1</div>
+              <div class="value">0</div>
+              <div class="mark ok">entered</div>
+            </div>
+            <div class="entry">
+              <div class="term">T2</div>
+              <div class="value">1</div>
+              <div class="mark ok">entered</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="branch-box note-box">
+          <h3 style="margin-bottom:8px;">Branching Record</h3>
+          <p style="margin-top:0;color:var(--muted);">
+            Once the rule changes, the same sequence can fork into multiple legitimate or contested futures.
+          </p>
+          <div class="branch-track" id="branchTrack">
+            <div class="branch-node standard">standard</div>
+            <div class="branch-node changed">rule changed</div>
+            <div class="branch-node disputed">disputed</div>
+            <div class="branch-node accident">accident retained</div>
+          </div>
+        </div>
+
+        <div class="archive-box" style="margin-top:14px;">
+          <h3 style="margin-bottom:8px;">Archive of Annotations</h3>
+          <div class="archive-log">
+            <ul id="statusList">
+              <li>Jones mode active: procedure is visible as iterative, social, and patched.</li>
+            </ul>
+          </div>
+        </div>
       </div>
 
-      <div class="roles-grid" style="margin-top:14px;">
-        <div id="role1" class="role-card"><strong>Clerk A: Keeper of the Previous Term</strong><br>Retains the older of the two most recent values.</div>
-        <div id="role2" class="role-card"><strong>Clerk B: Keeper of the Current Term</strong><br>Retains the newer of the two most recent values.</div>
-        <div id="role3" class="role-card"><strong>Clerk C: Summation Clerk</strong><br>Adds the values from Clerk A and Clerk B and enters the next term.</div>
-        <div id="role4" class="role-card"><strong>Clerk D: Verifying Clerk</strong><br>Confirms that the new value equals the sum of the previous two. No further step proceeds until verified.</div>
-        <div id="role5" class="role-card"><strong>Clerk E: Advancement Clerk</strong><br>Advances the ledger and restores order after error or dispute.</div>
-      </div>
+      <div class="card panel">
+        <h2>Formal Machine</h2>
+        <p class="panel-sub">Calculation as compressed procedure, registers, loops, and rule enforcement.</p>
 
-      <div class="marginalia" id="memoNote">
-        Marginal note: In a human office, memory and verification must be assigned to people, not hidden inside variables.
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="section-title">
-        <h2>2. Formal Program Console</h2>
-        <span class="badge">calculation as code</span>
-      </div>
-
-      <div class="control-grid">
-        <div class="control-card">
-          <label for="termCount">Choose number of terms</label>
+        <div class="machine-box">
+          <label for="termCount"><strong>Choose number of terms</strong></label>
           <input type="number" id="termCount" min="1" value="10" />
-          <div class="controls-row">
+
+          <div class="machine-controls">
             <button onclick="showFibonacci()">Generate Fibonacci</button>
             <button class="alt" onclick="showFibMod7()">Fibonacci mod 7</button>
             <button class="soft" onclick="showRuleChangeSequence()">When the Rule Changes</button>
+            <button class="warn" onclick="playCalculation()">Play Calculation</button>
+          </div>
+
+          <div class="machine-state">
+            <div class="register">
+              <div class="register-label">previous</div>
+              <div class="register-value" id="regPrev">0</div>
+            </div>
+            <div class="register">
+              <div class="register-label">current</div>
+              <div class="register-value" id="regCurr">1</div>
+            </div>
+            <div class="register">
+              <div class="register-label">next</div>
+              <div class="register-value" id="regNext">—</div>
+            </div>
+          </div>
+
+          <div class="tape" id="tapeBox">
+            <div class="tape-cell">0</div>
+            <div class="tape-cell head">1</div>
           </div>
         </div>
 
-        <div class="control-card">
-          <h3>Interruptions</h3>
-          <p>Use these to make the office feel less pure and more human.</p>
-          <div class="controls-row">
-            <button class="alt" onclick="disputeResult()">Dispute the Result</button>
-            <button class="soft" onclick="happyAccident()">Happy Accident</button>
-            <button onclick="clearLog()">Clear Annotations</button>
+        <div class="play-box">
+          <div class="step-status" id="stepStatus">
+            Waiting for instruction. The machine is idle; the office is available for dispute.
+          </div>
+          <div class="output" id="output">
+Output will appear here.
           </div>
         </div>
       </div>
+    </section>
 
-      <div class="output-panel">
-        <div class="output" id="output">Output will appear here.</div>
-        <div class="status-log">
-          <h3>Office Annotations</h3>
-          <ul class="status-list" id="statusList">
-            <li>Jones mode active: procedure is provisional, iterative, and social.</li>
-          </ul>
-          <div id="stampBox" class="stamp">PROVISIONALLY ACCEPTED</div>
+    <section class="summary-section">
+      <div class="card summary-card">
+        <h2>What the Artifact is Doing</h2>
+        <p>
+          The office side makes calculation look like organized labor: roles, memory, hierarchy, verification, and the possibility of misunderstanding. The machine side makes calculation look like formal procedure: variables, loops, registers, and a faster compression of action into rule.
+        </p>
+        <p>
+          The “When the Rule Changes” interaction introduces a sequence that begins like Fibonacci but shifts after step 5, alternating between ordinary addition and addition mod 7. I use that not as a mathematically pure sequence, but as a model of rule instability or interpretive drift.
+        </p>
+        <p>
+          The dispute and happy accident controls make visible two things formal code often hides: that correctness can be contested, and that not every deviation is mere failure. Some become novelty.
+        </p>
+      </div>
+
+      <div class="card summary-card">
+        <h2>Comparison + Jones Note</h2>
+        <div class="compare-grid">
+          <div class="mini">
+            <h4>Memo</h4>
+            <p>Makes visible labor, accountability, checking, and social coordination.</p>
+          </div>
+          <div class="mini">
+            <h4>Program</h4>
+            <p>Makes visible procedure and automation while concealing much of the office behind syntax.</p>
+          </div>
+          <div class="mini">
+            <h4>Dispute</h4>
+            <p>Shows that certainty can be procedural, provisional, or political.</p>
+          </div>
+          <div class="mini">
+            <h4>Accident</h4>
+            <p>Shows that deviation may produce error, but may also produce new form.</p>
+          </div>
+        </div>
+        <div class="marginalia" id="jonesNote">
+          Final note: programming is not pure, disembodied thought. It is iterative, social, and craft-like work; the shift from memo to code reorganizes judgment rather than abolishing it.
         </div>
       </div>
     </section>
 
-    <section class="section">
-      <div class="section-title">
-        <h2>3. When the Rule Changes</h2>
-        <span class="badge">rule instability</span>
-      </div>
-      <p>
-        This sequence begins like Fibonacci, but after step 5 the rule changes. Instead of always adding the previous two terms in the same way, the procedure starts alternating between ordinary addition and addition modulo 7.
-      </p>
-      <p>
-        I use this not as a mathematically “correct” sequence, but as a model of rule instability or interpretive drift. In a human computing office, ambiguity can appear in how instructions are understood or applied. Formal code reduces that ambiguity, but it does not erase the human act of choosing the rule itself.
-      </p>
-    </section>
-
-    <section class="section">
-      <div class="section-title">
-        <h2>4. Comparison</h2>
-        <span class="badge">what becomes visible?</span>
-      </div>
-      <div class="compare-grid">
-        <div class="mini-card">
-          <h3>Manager’s Memo</h3>
-          <p>Makes visible labor, hierarchy, memory, verification, accountability, and disagreement.</p>
-        </div>
-        <div class="mini-card">
-          <h3>Formal Program</h3>
-          <p>Makes visible explicit procedure, iteration, and automation while hiding the social structure the memo must expose.</p>
-        </div>
-        <div class="mini-card">
-          <h3>Dispute</h3>
-          <p>Shows that certainty can be procedural, political, or merely provisional.</p>
-        </div>
-        <div class="mini-card">
-          <h3>Happy Accident</h3>
-          <p>Suggests that not every deviation is failure; some become novelty.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="section-title">
-        <h2>5. Final Note on Jones</h2>
-        <span class="badge">programming is not pure thought</span>
-      </div>
-      <div class="note-card">
-        Matt Jones helped me frame this project by pushing against the idea that programming is pure, disembodied thought. In this reading, programming is not simply clean logic detached from people. It is iterative, social, and craft-like work. That matters here because the shift from memo to code does not erase human judgment completely; it reorganizes where that judgment lives.
-      </div>
-    </section>
-
-    <footer>
+    <div class="footer">
       Built for Week 3: Computer Programming.
-    </footer>
+    </div>
   </div>
 
   <script>
     let currentRole = 0;
     let currentMode = "jones";
-    let lastSequence = [];
+    let lastSequence = [0, 1];
+    let playing = false;
+
+    const roleIds = ["role1", "role2", "role3", "role4", "role5"];
 
     const disputes = [
       "The Verifier objects: the ledger preserves a result, but not the reasoning.",
@@ -468,68 +768,78 @@ For each succeeding term, the following division of labor shall be observed.
     ];
 
     function setMode(mode) {
-      const body = document.body;
-      body.classList.remove("babbage", "jones");
+      document.body.classList.remove("babbage", "jones");
+      currentMode = mode;
 
       if (mode === "babbage") {
-        body.classList.add("babbage");
-        currentMode = "babbage";
-        setStamp("MECHANICALLY VERIFIED");
-        addStatus("Babbage mode active: stricter order, cleaner law, less visible friction.");
+        document.body.classList.add("babbage");
+        updateStamp("MECHANICALLY VERIFIED");
+        addStatus("Babbage mode active: order, law, and formal discipline intensified.");
+        document.getElementById("ledgerModePill").textContent = "Babbage mode";
         document.getElementById("memoNote").textContent =
-          "Marginal note: In Babbage mode, system and order take precedence over improvisation.";
+          "Marginal note: In Babbage mode, system and rule enforcement take precedence over improvisation.";
+        document.getElementById("jonesNote").textContent =
+          "Counterpoint: even in formal order, a human still chooses the rule, the boundary, and the system.";
       } else if (mode === "jones") {
-        body.classList.add("jones");
-        currentMode = "jones";
-        setStamp("PROVISIONALLY ACCEPTED");
-        addStatus("Jones mode active: procedure is provisional, iterative, and social.");
+        document.body.classList.add("jones");
+        updateStamp("PROVISIONALLY ACCEPTED");
+        addStatus("Jones mode active: procedure is visible as iterative, social, and patched.");
+        document.getElementById("ledgerModePill").textContent = "Jones mode";
         document.getElementById("memoNote").textContent =
-          "Marginal note: In Jones mode, programming is visible as coordination, repair, and craft.";
+          "Marginal note: In Jones mode, programming appears as coordination, repair, and craft.";
+        document.getElementById("jonesNote").textContent =
+          "Final note: programming is not pure, disembodied thought. It is iterative, social, and craft-like work; the shift from memo to code reorganizes judgment rather than abolishing it.";
       } else {
-        currentMode = "neutral";
-        setStamp("RECORDED");
-        addStatus("Neutral mode active: neither office fantasy fully wins.");
+        updateStamp("RECORDED");
+        addStatus("Neutral mode active: neither fantasy fully wins.");
+        document.getElementById("ledgerModePill").textContent = "Neutral mode";
         document.getElementById("memoNote").textContent =
           "Marginal note: Formal systems may reduce ambiguity, but do not eliminate design choices.";
+        document.getElementById("jonesNote").textContent =
+          "In neutral mode, the artifact treats code and office as different organizations of the same act.";
       }
     }
 
-    function setStamp(text) {
-      document.getElementById("stampBox").textContent = text;
+    function updateStamp(text) {
+      document.getElementById("mainStamp").textContent = text;
     }
 
     function addStatus(text) {
-      const ul = document.getElementById("statusList");
       const li = document.createElement("li");
       li.textContent = text;
-      ul.prepend(li);
-    }
-
-    function clearLog() {
-      const ul = document.getElementById("statusList");
-      ul.innerHTML = "";
-      addStatus("Annotations cleared. Office memory partially reset.");
+      document.getElementById("statusList").prepend(li);
     }
 
     function showNextRole() {
-      const roles = [
-        document.getElementById("role1"),
-        document.getElementById("role2"),
-        document.getElementById("role3"),
-        document.getElementById("role4"),
-        document.getElementById("role5")
-      ];
-      if (currentRole < roles.length) {
-        roles[currentRole].classList.add("visible");
-        addStatus(`Role revealed: ${roles[currentRole].textContent.trim().slice(0, 36)}...`);
+      if (currentRole < roleIds.length) {
+        const el = document.getElementById(roleIds[currentRole]);
+        el.classList.add("visible");
+        addStatus(`Role revealed: ${el.querySelector("h4").textContent}.`);
         currentRole++;
       }
     }
 
     function resetRoles() {
-      document.querySelectorAll(".role-card").forEach(card => card.classList.remove("visible"));
+      roleIds.forEach(id => {
+        const el = document.getElementById(id);
+        el.classList.remove("visible");
+        el.classList.remove("active");
+      });
       currentRole = 0;
       addStatus("Office roles concealed. Bureaucratic structure hidden again.");
+    }
+
+    function flashRole(index) {
+      roleIds.forEach(id => document.getElementById(id).classList.remove("active"));
+      if (index >= 0 && index < roleIds.length) {
+        const el = document.getElementById(roleIds[index]);
+        el.classList.add("visible");
+        el.classList.add("active");
+      }
+    }
+
+    function clearRoleHighlights() {
+      roleIds.forEach(id => document.getElementById(id).classList.remove("active"));
     }
 
     function getTermCount() {
@@ -541,9 +851,7 @@ For each succeeding term, the following division of labor shall be observed.
       if (n <= 0) return [];
       if (n === 1) return [0];
       const seq = [0, 1];
-      while (seq.length < n) {
-        seq.push(seq[seq.length - 1] + seq[seq.length - 2]);
-      }
+      while (seq.length < n) seq.push(seq[seq.length - 1] + seq[seq.length - 2]);
       return seq;
     }
 
@@ -551,9 +859,7 @@ For each succeeding term, the following division of labor shall be observed.
       if (n <= 0) return [];
       if (n === 1) return [0];
       const seq = [0, 1];
-      while (seq.length < n) {
-        seq.push((seq[seq.length - 1] + seq[seq.length - 2]) % 7);
-      }
+      while (seq.length < n) seq.push((seq[seq.length - 1] + seq[seq.length - 2]) % 7);
       return seq;
     }
 
@@ -564,18 +870,68 @@ For each succeeding term, the following division of labor shall be observed.
       while (seq.length < n) {
         const stepNumber = seq.length + 1;
         let next = seq[seq.length - 1] + seq[seq.length - 2];
-        if (stepNumber > 5 && stepNumber % 2 !== 0) {
-          next = next % 7;
-        }
+        if (stepNumber > 5 && stepNumber % 2 !== 0) next = next % 7;
         seq.push(next);
       }
       return seq;
+    }
+
+    function renderTape(seq) {
+      const box = document.getElementById("tapeBox");
+      box.innerHTML = "";
+      seq.forEach((v, i) => {
+        const cell = document.createElement("div");
+        cell.className = "tape-cell" + (i === seq.length - 1 ? " head" : "");
+        cell.textContent = v;
+        box.appendChild(cell);
+      });
+    }
+
+    function setRegisters(prev, curr, next = "—") {
+      document.getElementById("regPrev").textContent = prev ?? "—";
+      document.getElementById("regCurr").textContent = curr ?? "—";
+      document.getElementById("regNext").textContent = next ?? "—";
+    }
+
+    function resetLedgerBase() {
+      const ledger = document.getElementById("ledgerEntries");
+      ledger.innerHTML = `
+        <div class="entry">
+          <div class="term">T1</div>
+          <div class="value">0</div>
+          <div class="mark ok">entered</div>
+        </div>
+        <div class="entry">
+          <div class="term">T2</div>
+          <div class="value">1</div>
+          <div class="mark ok">entered</div>
+        </div>
+      `;
+    }
+
+    function addLedgerEntry(term, value, kind = "ok", label = "verified") {
+      const row = document.createElement("div");
+      row.className = "entry";
+      row.innerHTML = `
+        <div class="term">T${term}</div>
+        <div class="value">${value}</div>
+        <div class="mark ${kind}">${label}</div>
+      `;
+      document.getElementById("ledgerEntries").appendChild(row);
+      row.scrollIntoView({ block: "end", behavior: "smooth" });
     }
 
     function displaySequence(title, seq, note) {
       lastSequence = [...seq];
       document.getElementById("output").textContent =
         `${title}\n\n${seq.join(", ")}\n\n${note}`;
+      renderTape(seq.slice(-10));
+      if (seq.length >= 2) setRegisters(seq[seq.length - 2], seq[seq.length - 1]);
+    }
+
+    function rebuildLedgerFromSequence(seq, mode = "ok", label = "verified") {
+      resetLedgerBase();
+      for (let i = 2; i < seq.length; i++) addLedgerEntry(i + 1, seq[i], mode, label);
     }
 
     function showFibonacci() {
@@ -588,9 +944,13 @@ For each succeeding term, the following division of labor shall be observed.
           ? "Mode note: Procedure rendered as stable formal law."
           : "Mode note: Stable rule, but still dependent on prior human design."
       );
+      rebuildLedgerFromSequence(seq, "ok", currentMode === "babbage" ? "enforced" : "verified");
       addStatus(currentMode === "babbage"
         ? babbageNotes[Math.floor(Math.random() * babbageNotes.length)]
         : jonesNotes[Math.floor(Math.random() * jonesNotes.length)]);
+      updateStamp(currentMode === "babbage" ? "RULE ENFORCED" : "PROVISIONALLY ACCEPTED");
+      document.getElementById("stepStatus").textContent =
+        "Standard procedure complete. No rule drift introduced.";
     }
 
     function showFibMod7() {
@@ -601,7 +961,11 @@ For each succeeding term, the following division of labor shall be observed.
         seq,
         "A slight change in the rule produces a visibly different pattern."
       );
+      rebuildLedgerFromSequence(seq, "warn", "transformed");
       addStatus("Remainder arithmetic applied: same office, different law.");
+      updateStamp("RULE ADAPTED");
+      document.getElementById("stepStatus").textContent =
+        "A stable sequence has been recalculated under a different rule.";
     }
 
     function showRuleChangeSequence() {
@@ -612,17 +976,27 @@ For each succeeding term, the following division of labor shall be observed.
         seq,
         "Rule: Fibonacci through step 5, then alternating between ordinary addition and addition mod 7."
       );
+      resetLedgerBase();
+      for (let i = 2; i < seq.length; i++) {
+        const kind = (i + 1) > 5 ? ((i + 1) % 2 !== 0 ? "warn" : "ok") : "ok";
+        const label = (i + 1) > 5 ? ((i + 1) % 2 !== 0 ? "revised" : "continued") : "verified";
+        addLedgerEntry(i + 1, seq[i], kind, label);
+      }
       addStatus("Rule drift introduced. Interpretation has re-entered the sequence.");
-      setStamp(currentMode === "babbage" ? "RULE REVISED" : "CONTESTED PROCEDURE");
+      updateStamp(currentMode === "babbage" ? "RULE REVISED" : "CONTESTED PROCEDURE");
+      document.getElementById("stepStatus").textContent =
+        "The sequence now forks conceptually: one branch stays stable, another changes with the rule.";
     }
 
     function disputeResult() {
       const msg = disputes[Math.floor(Math.random() * disputes.length)];
       addStatus(msg);
-      setStamp("DISPUTED");
+      updateStamp("DISPUTED");
+      document.getElementById("stepStatus").textContent = msg;
       if (lastSequence.length > 0) {
-        document.getElementById("output").textContent +=
-          `\n\n[Dispute entered into the ledger]\n${msg}`;
+        const last = lastSequence[lastSequence.length - 1];
+        addLedgerEntry(lastSequence.length, last, "bad", "disputed");
+        document.getElementById("output").textContent += `\n\n[Dispute entered into the ledger]\n${msg}`;
       }
     }
 
@@ -643,11 +1017,72 @@ For each succeeding term, the following division of labor shall be observed.
       document.getElementById("output").textContent =
         `Happy Accident (${n} terms)\n\n${seq.join(", ")}\n\n` +
         "An error, pause, or repetition has produced a variant sequence. Not every deviation is mere failure; some become novelty.";
+      rebuildLedgerFromSequence(seq, "warn", "retained");
       addStatus("Innovation discovered through clerical deviation.");
-      setStamp("ACCIDENT RETAINED");
+      updateStamp("ACCIDENT RETAINED");
+      document.getElementById("stepStatus").textContent =
+        "A deviation has been preserved rather than discarded.";
+      renderTape(seq.slice(-10));
+      if (seq.length >= 2) setRegisters(seq[seq.length - 2], seq[seq.length - 1]);
+    }
+
+    async function playCalculation() {
+      if (playing) return;
+      playing = true;
+      resetLedgerBase();
+      const n = Math.min(getTermCount(), 10);
+      const seq = [0, 1];
+      renderTape(seq);
+      setRegisters(0, 1, "—");
+      document.getElementById("output").textContent = "Playing calculation step-by-step...\n";
+      addStatus("Play Calculation started: office and machine now perform the same act at different speeds.");
+
+      const wait = (ms) => new Promise(r => setTimeout(r, ms));
+
+      for (let term = 3; term <= n; term++) {
+        const prev = seq[seq.length - 2];
+        const curr = seq[seq.length - 1];
+        const next = prev + curr;
+
+        flashRole(0);
+        document.getElementById("stepStatus").textContent = `Clerk A presents prior value ${prev}.`;
+        setRegisters(prev, curr, "—");
+        await wait(450);
+
+        flashRole(1);
+        document.getElementById("stepStatus").textContent = `Clerk B presents current value ${curr}.`;
+        await wait(450);
+
+        flashRole(2);
+        document.getElementById("stepStatus").textContent = `Clerk C sums ${prev} + ${curr}.`;
+        setRegisters(prev, curr, next);
+        await wait(600);
+
+        flashRole(3);
+        document.getElementById("stepStatus").textContent = `Clerk D verifies the new term ${next}.`;
+        await wait(500);
+
+        flashRole(4);
+        seq.push(next);
+        renderTape(seq);
+        addLedgerEntry(term, next, "ok", currentMode === "babbage" ? "enforced" : "verified");
+        document.getElementById("output").textContent =
+          `Playing calculation step-by-step...\n\n` + seq.join(", ");
+        document.getElementById("stepStatus").textContent = `Clerk E advances the ledger. Term ${term} entered.`;
+        await wait(550);
+      }
+
+      clearRoleHighlights();
+      lastSequence = [...seq];
+      addStatus("Play Calculation complete. Human office and machine reached the same sequence through different organizations of action.");
+      document.getElementById("stepStatus").textContent =
+        "Calculation complete. The machine compressed what the office had to stage explicitly.";
+      playing = false;
     }
 
     setMode("jones");
+    renderTape([0,1]);
+    setRegisters(0,1,"—");
   </script>
 </body>
 </html>
