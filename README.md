@@ -1,63 +1,70 @@
-# Then vs. Now: The Office of Calculation
+# The Same Strike
 
-An interactive Week 3 artifact for *Computation, Culture, and Society*.
+**Human committee. Formal program. Same case, different structures of authorization.**
 
-## Project idea
+## Overview
 
-I began with Fibonacci, but the real issue is what changes when calculation moves from a staff of human computers to a formal program. This artifact compares these two forms and asks whether programming actually removes ambiguity and human judgment, or merely hides them in another language.
+**The Same Strike** is an interactive philosophical web artifact about what changes when a lethal decision is processed through different systems of authorization.
 
-## What the artifact does
+The piece stages the same strike request in two forms:
 
-This webpage presents calculation as an interactive **Office of Calculation**. It includes:
+- **System A: Human Committee**
+- **System B: Formal Program**
 
-- a **manager’s memo** that organizes Fibonacci as a human computing office
-- a **formal program** that generates:
-  - Fibonacci
-  - Fibonacci mod 7
-  - **When the Rule Changes** (a sequence where the rule shifts after step 5)
-- interactive features like:
-  - **Show office roles**
-  - **Dispute the Result**
-  - **Happy Accident**
-  - **Babbage Mode**
-  - **Jones Mode**
+The user moves through both systems and then compares them. The point is not to simulate warfare operationally, but to ask a philosophical and political question:
 
-## Main argument
+> What happens when judgment moves from visible human deliberation into formal procedure?
 
-The artifact suggests that programming does not simply eliminate ambiguity and judgment. Instead, it often relocates them into rule design, naming, verification, assumptions, and interface choices.
+## Core argument
 
-The office memo makes visible:
-- labor
-- hierarchy
-- memory
-- verification
-- accountability
+The artifact argues that programming does not eliminate ambiguity or responsibility. It often reorganizes them.
 
-The formal program makes visible:
-- explicit procedure
-- iteration
-- variables
-- automation
+In the committee version:
+- disagreement is visible
+- hesitation is visible
+- bias and deference can be named
+- responsibility is uncomfortable, but at least partly locatable
 
-Together, they show that programming is not just pure thought, but also a social and linguistic way of organizing calculation.
+In the program version:
+- judgment is compressed into variables, weights, and thresholds
+- uncertainty appears as score
+- assumptions become harder to see
+- responsibility becomes distributed and difficult to assign
 
-## Why it fits Week 3
+The deeper point is that even the “human” committee is not outside computation. It already depends on upstream systems it cannot fully interrogate. So the contrast is not simply human judgment versus programming, but one layer of programming versus another.
 
-Week 3 asks what changes when computing moves from human staffs to formal programs, whether programming is really “all mind,” and what different programming languages imply. This artifact addresses those questions directly by comparing a human computing office with executable code. It also draws on Matt Jones’s argument that programming is iterative, social, and craft-like rather than simply pure abstraction.  [oai_citation:2‡Computation, Culture & Society 2026.pdf](sediment://file_00000000aba071fd974b28eb9283fc5d)  [oai_citation:3‡05 Jones-programming_in-Information A Historical Companion by Ann Blair, Paul Duguid, Anja-Silvia Goeing, Anthony Grafton (1).pdf](sediment://file_00000000c96c71fd86de6a2f8670eabd)
+## Why the artifact is randomized
 
-## Files
+The artifact is intentionally randomized.
 
-- `index.html` — the full interactive artifact
+Each run changes slightly:
+- committee votes shift
+- confidence levels change
+- nested programs appear or disappear
+- algorithmic scores vary
 
-## Live site
+This randomness is part of the argument. It shows that both systems can present themselves as rational and procedural while still depending on contingent structures of interpretation.
 
-Add your GitHub Pages URL here:
+## Relation to Week 3
 
-`https://yourusername.github.io/your-repo-name/`
+This project extends Week 3’s question about what changes when human judgment is translated into formal program. It takes the week’s concerns about human computers, programming, procedure, and language and pushes them into a contemporary context of automated authorization and hidden responsibility.
 
-## Repo
+## Built with
 
-Add your repo URL here:
+- HTML
+- CSS
+- JavaScript
 
-`https://github.com/yourusername/your-repo-name`# Then vs. Now: Calculation, Human Computers, and Formal Programs
-HIPS 18504 Week 3 hw
+## Running the project
+
+Open `index.html` in a browser, or publish the repository through GitHub Pages.
+
+## Project statement
+
+This is a philosophical artifact about formalization, not a simulation of warfare. Its central question is:
+
+> When harm follows from a decision, where does responsibility go once judgment has been translated into code?
+
+## Author
+
+Cosmos Boekell
