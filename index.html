@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Then vs. Now: Fibonacci, Human Computers, and Formal Programs</title>
+  <style>
+    body {
+      font-family: Georgia, serif;
+      line-height: 1.6;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 4rem;
+      background: #fafafa;
+      color: #1f1f1f;
+    }
+
+    h1, h2, h3 {
+      line-height: 1.2;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      font-size: 1.05rem;
+      color: #444;
+      margin-bottom: 2rem;
+    }
+
+    .section {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin: 1.25rem 0;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
+
+    .memo {
+      background: #fffdf5;
+      border-left: 5px solid #c8a94a;
+      padding: 1rem;
+      white-space: pre-wrap;
+      border-radius: 8px;
+      min-height: 180px;
+    }
+
+    .role-card {
+      background: #f8f8f8;
+      border: 1px solid #e3e3e3;
+      border-radius: 10px;
+      padding: 0.9rem;
+      margin-top: 0.75rem;
+      display: none;
+    }
+
+    .role-card.visible {
+      display: block;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 0.4rem;
+    }
+
+    input[type="number"] {
+      width: 120px;
+      padding: 0.5rem;
+      font-size: 1rem;
+      margin-right: 0.5rem;
+    }
+
+    button {
+      padding: 0.55rem 0.85rem;
+      margin: 0.35rem 0.35rem 0.35rem 0;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #222;
+      color: white;
+      font-size: 0.95rem;
+    }
+
+    button:hover {
+      background: #444;
+    }
+
+    .output {
+      margin-top: 1rem;
+      padding: 0.9rem;
+      background: #f5f5f5;
+      border-radius: 10px;
+      font-family: "Courier New", monospace;
+      white-space: pre-wrap;
+    }
+
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .mini-card {
+      background: #f8f8f8;
+      border: 1px solid #e3e3e3;
+      border-radius: 10px;
+      padding: 1rem;
+    }
+
+    .note {
+      background: #f3f7ff;
+      border-left: 5px solid #5b86e5;
+      padding: 1rem;
+      border-radius: 8px;
+    }
+
+    footer {
+      margin-top: 2rem;
+      font-size: 0.95rem;
+      color: #555;
+    }
+
+    @media (max-width: 700px) {
+      .comparison-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Then vs. Now: Fibonacci, Human Computers, and Formal Programs</h1>
+    <p class="subtitle">
+      I began with Fibonacci, but the real issue is what changes when calculation moves from a staff of human computers to a formal program. My artifact compares these two forms and asks whether programming actually removes ambiguity and human judgment, or merely hides them in another language.
+    </p>
+  </header>
+
+  <section class="section">
+    <h2>1. Why Fibonacci?</h2>
+    <p>
+      Fibonacci is simple enough to make the procedure visible. That simplicity lets this project focus less on mathematical difficulty and more on what changes when a calculation is organized through people versus through code.
+    </p>
+    <p>
+      In one form, Fibonacci becomes an office procedure with memory, roles, checking, and hierarchy. In another, it becomes a formal program with variables, rules, and repetition.
+    </p>
+  </section>
+
+  <section class="section">
+    <h2>2. Human Computers: A Manager’s Memo</h2>
+    <div class="memo">
+Office of Sequential Calculation
+Instructions for the Production of Fibonacci Numbers
+
+The first clerk shall enter the initial two values in the ledger as follows:
+
+Term 1 = 0
+Term 2 = 1
+
+For each succeeding term, the following division of labor shall be observed.
+    </div>
+
+    <button onclick="showNextRole()">Show office roles</button>
+    <button onclick="resetRoles()">Reset roles</button>
+
+    <div id="role1" class="role-card">
+      <strong>Clerk A: Keeper of the Previous Term</strong><br />
+      Retains the older of the two most recent values.
+    </div>
+
+    <div id="role2" class="role-card">
+      <strong>Clerk B: Keeper of the Current Term</strong><br />
+      Retains the newer of the two most recent values.
+    </div>
+
+    <div id="role3" class="role-card">
+      <strong>Clerk C: Summation Clerk</strong><br />
+      Adds the values supplied by Clerk A and Clerk B and enters the resulting sum as the next term in the ledger.
+    </div>
+
+    <div id="role4" class="role-card">
+      <strong>Clerk D: Verifying Clerk</strong><br />
+      Confirms that the new value equals the sum of the previous two values. No new step shall proceed until this verification is complete.
+    </div>
+
+    <div id="role5" class="role-card">
+      <strong>Clerk E: Advancement Clerk</strong><br />
+      Reassigns the previous current value as the new prior value and the new sum as the new current value. If an error is discovered, the office shall return to the last verified pair and recompute.
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>3. Formal Program</h2>
+    <label for="termCount">Choose number of terms:</label>
+    <input type="number" id="termCount" min="1" value="10" />
+    <button onclick="showFibonacci()">Generate Fibonacci</button>
+    <button onclick="showFibMod7()">Generate Fibonacci mod 7</button>
+    <button onclick="showRuleChangeSequence()">When the Rule Changes</button>
+
+    <div id="output" class="output">Output will appear here.</div>
+  </section>
+
+  <section class="section">
+    <h2>4. When the Rule Changes</h2>
+    <p>
+      This sequence begins like Fibonacci, but after step 5 the rule changes. Instead of always adding the previous two terms in the same way, the program begins alternating between two procedures:
+    </p>
+    <ul>
+      <li>on even steps after 5, it adds the previous two terms normally</li>
+      <li>on odd steps after 5, it adds the previous two terms and reduces the result modulo 7</li>
+    </ul>
+    <p>
+      I use this not as a mathematically “correct” sequence, but as a model of rule instability or interpretive drift. In a human computing office, ambiguity can appear in how instructions are understood or applied. Formal code reduces that ambiguity, but it does not erase the human act of choosing the rule itself.
+    </p>
+  </section>
+
+  <section class="section">
+    <h2>5. Comparison</h2>
+    <div class="comparison-grid">
+      <div class="mini-card">
+        <h3>Manager’s Memo</h3>
+        <p>
+          Makes visible labor, hierarchy, memory, verification, accountability, and the possibility of misunderstanding.
+        </p>
+      </div>
+      <div class="mini-card">
+        <h3>Formal Program</h3>
+        <p>
+          Makes visible rules, iteration, variables, and automation, while hiding most of the social structure required in the memo.
+        </p>
+      </div>
+    </div>
+    <p>
+      The code looks cleaner, but that does not mean judgment disappears. It may simply be relocated into choices about definitions, assumptions, and design.
+    </p>
+  </section>
+
+  <section class="section">
+    <h2>6. Reflection</h2>
+    <p>
+      This project compares two forms of programming: a manager’s memo for a staff of human computers and a formal program that computes the same sequence automatically. I chose Fibonacci because it is simple enough to make the procedure easy to follow, which helped me focus on the real issue: what changes when calculation moves from people to code.
+    </p>
+    <p>
+      Writing the memo made me realize that human computation requires explicit organization. Someone has to remember prior values, someone has to add them, someone has to verify the result, and someone has to authorize the next step. In that setting, programming looks like management. By contrast, the formal program compresses memory, repetition, and control into variables and loops. It performs the same logic, but it hides the hierarchy and accountability that the memo has to spell out.
+    </p>
+    <p>
+      The “When the Rule Changes” sequence extends this comparison by showing what happens when the rule itself becomes less stable. It suggests that formal programming reduces ambiguity, but does not eliminate human judgment entirely. Judgment still enters through design, naming, rule choice, and what counts as correctness.
+    </p>
+  </section>
+
+  <section class="section">
+    <h2>7. Final Note on Jones</h2>
+    <div class="note">
+      Matt Jones helped me frame this project by pushing against the idea that programming is pure, disembodied thought. In this reading, programming is not simply clean logic detached from people. It is iterative, social, and craft-like work. That matters here because the shift from memo to code does not erase human judgment completely; it reorganizes where that judgment lives.
+    </div>
+  </section>
+
+  <footer>
+    Built for Week 3: Computer Programming.
+  </footer>
+
+  <script>
+    let currentRole = 0;
+
+    function showNextRole() {
+      const roles = [
+        document.getElementById("role1"),
+        document.getElementById("role2"),
+        document.getElementById("role3"),
+        document.getElementById("role4"),
+        document.getElementById("role5")
+      ];
+
+      if (currentRole < roles.length) {
+        roles[currentRole].classList.add("visible");
+        currentRole++;
+      }
+    }
+
+    function resetRoles() {
+      const roles = document.querySelectorAll(".role-card");
+      roles.forEach(role => role.classList.remove("visible"));
+      currentRole = 0;
+    }
+
+    function fibonacci(n) {
+      if (n <= 0) return [];
+      if (n === 1) return [0];
+
+      const sequence = [0, 1];
+      while (sequence.length < n) {
+        const nextValue = sequence[sequence.length - 1] + sequence[sequence.length - 2];
+        sequence.push(nextValue);
+      }
+      return sequence;
+    }
+
+    function fibonacciMod7(n) {
+      if (n <= 0) return [];
+      if (n === 1) return [0];
+
+      const sequence = [0, 1];
+      while (sequence.length < n) {
+        const nextValue = (sequence[sequence.length - 1] + sequence[sequence.length - 2]) % 7;
+        sequence.push(nextValue);
+      }
+      return sequence;
+    }
+
+    function ruleChangeSequence(n) {
+      if (n <= 0) return [];
+      if (n === 1) return [0];
+
+      const sequence = [0, 1];
+
+      while (sequence.length < n) {
+        const stepNumber = sequence.length + 1;
+        let nextValue = sequence[sequence.length - 1] + sequence[sequence.length - 2];
+
+        if (stepNumber > 5) {
+          if (stepNumber % 2 !== 0) {
+            nextValue = nextValue % 7;
+          }
+        }
+
+        sequence.push(nextValue);
+      }
+
+      return sequence;
+    }
+
+    function getTermCount() {
+      const input = document.getElementById("termCount");
+      const n = parseInt(input.value, 10);
+      if (isNaN(n) || n < 1) return 10;
+      return n;
+    }
+
+    function showFibonacci() {
+      const n = getTermCount();
+      const result = fibonacci(n);
+      document.getElementById("output").textContent =
+        `Fibonacci (${n} terms):\n` + result.join(", ");
+    }
+
+    function showFibMod7() {
+      const n = getTermCount();
+      const result = fibonacciMod7(n);
+      document.getElementById("output").textContent =
+        `Fibonacci mod 7 (${n} terms):\n` + result.join(", ");
+    }
+
+    function showRuleChangeSequence() {
+      const n = getTermCount();
+      const result = ruleChangeSequence(n);
+      document.getElementById("output").textContent =
+        `When the rule changes (${n} terms):\n` +
+        result.join(", ") +
+        `\n\nRule: Fibonacci through step 5, then alternating between normal addition and addition mod 7.`;
+    }
+  </script>
+</body>
+</html>
