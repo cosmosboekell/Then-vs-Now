@@ -3,57 +3,168 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Then vs. Now: Fibonacci, Human Computers, and Formal Programs</title>
+  <title>Then vs. Now: The Office of Calculation</title>
   <style>
+    :root {
+      --bg: #f6f1e7;
+      --paper: #fffaf0;
+      --ink: #2a241d;
+      --muted: #6c6257;
+      --accent: #8b5e34;
+      --accent2: #4f6d7a;
+      --border: #d9cdbd;
+      --stamp: #a33c2f;
+      --shadow: rgba(60, 40, 20, 0.10);
+    }
+
+    body.babbage {
+      --bg: #eceff3;
+      --paper: #ffffff;
+      --ink: #1d2430;
+      --muted: #4e5a6a;
+      --accent: #2f4f6f;
+      --accent2: #7d8fa3;
+      --border: #cdd6df;
+      --stamp: #28435c;
+      --shadow: rgba(20, 30, 50, 0.08);
+    }
+
+    body.jones {
+      --bg: #f8efe3;
+      --paper: #fffaf4;
+      --ink: #2f241f;
+      --muted: #705f55;
+      --accent: #9b4d3a;
+      --accent2: #6b7d52;
+      --border: #dbcab6;
+      --stamp: #b03b2e;
+      --shadow: rgba(70, 30, 10, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
     body {
-      font-family: Georgia, serif;
+      margin: 0;
+      background:
+        radial-gradient(circle at top left, rgba(255,255,255,0.35), transparent 30%),
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 28px,
+          rgba(0,0,0,0.015) 29px
+        ),
+        var(--bg);
+      color: var(--ink);
+      font-family: Georgia, "Times New Roman", serif;
       line-height: 1.6;
-      max-width: 960px;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .container {
+      max-width: 1080px;
       margin: 0 auto;
-      padding: 2rem 1.25rem 4rem;
-      background: #fafafa;
-      color: #1f1f1f;
+      padding: 28px 18px 56px;
+    }
+
+    .header-card, .section {
+      background: var(--paper);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: 0 8px 24px var(--shadow);
+    }
+
+    .header-card {
+      padding: 28px;
+      margin-bottom: 22px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header-card::after {
+      content: "WEEK 3";
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      border: 2px solid var(--stamp);
+      color: var(--stamp);
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      transform: rotate(-7deg);
+      opacity: 0.85;
     }
 
     h1, h2, h3 {
-      line-height: 1.2;
+      line-height: 1.15;
+      margin-top: 0;
     }
 
     h1 {
-      font-size: 2.2rem;
-      margin-bottom: 0.5rem;
+      font-size: 2.5rem;
+      margin-bottom: 0.4rem;
     }
 
     .subtitle {
-      font-size: 1.05rem;
-      color: #444;
-      margin-bottom: 2rem;
+      font-size: 1.08rem;
+      color: var(--muted);
+      max-width: 850px;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
     }
 
     .section {
-      background: white;
-      border: 1px solid #ddd;
-      border-radius: 12px;
-      padding: 1.25rem;
-      margin: 1.25rem 0;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      padding: 22px;
+      margin: 18px 0;
+      position: relative;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      font-size: 0.8rem;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 4px 10px;
+      background: rgba(255,255,255,0.4);
     }
 
     .memo {
-      background: #fffdf5;
-      border-left: 5px solid #c8a94a;
-      padding: 1rem;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.3), rgba(0,0,0,0.01));
+      border-left: 6px solid var(--accent);
+      border-radius: 12px;
+      padding: 16px;
       white-space: pre-wrap;
-      border-radius: 8px;
-      min-height: 180px;
+      min-height: 170px;
+    }
+
+    .roles-grid, .compare-grid, .control-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .role-card, .mini-card, .control-card, .note-card {
+      background: rgba(255,255,255,0.55);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.04);
     }
 
     .role-card {
-      background: #f8f8f8;
-      border: 1px solid #e3e3e3;
-      border-radius: 10px;
-      padding: 0.9rem;
-      margin-top: 0.75rem;
       display: none;
     }
 
@@ -61,97 +172,153 @@
       display: block;
     }
 
+    .role-card strong {
+      color: var(--accent);
+    }
+
+    .controls-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 12px 0 0;
+    }
+
     label {
-      display: block;
       font-weight: bold;
-      margin-bottom: 0.4rem;
+      display: block;
+      margin-bottom: 6px;
     }
 
     input[type="number"] {
-      width: 120px;
-      padding: 0.5rem;
+      width: 140px;
+      padding: 10px 12px;
       font-size: 1rem;
-      margin-right: 0.5rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--ink);
     }
 
     button {
-      padding: 0.55rem 0.85rem;
-      margin: 0.35rem 0.35rem 0.35rem 0;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      background: #222;
+      appearance: none;
+      border: 1px solid rgba(0,0,0,0.08);
+      background: var(--ink);
       color: white;
-      font-size: 0.95rem;
+      padding: 10px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 0.96rem;
+      font-family: inherit;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+      transition: transform 0.12s ease, opacity 0.12s ease, background 0.2s ease;
     }
 
     button:hover {
-      background: #444;
+      transform: translateY(-1px);
+      opacity: 0.95;
+    }
+
+    button.alt {
+      background: var(--accent);
+    }
+
+    button.soft {
+      background: var(--accent2);
+    }
+
+    .output-panel {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 14px;
+    }
+
+    .output, .status-log {
+      background: #f7f5f1;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      min-height: 180px;
     }
 
     .output {
-      margin-top: 1rem;
-      padding: 0.9rem;
-      background: #f5f5f5;
-      border-radius: 10px;
       font-family: "Courier New", monospace;
       white-space: pre-wrap;
     }
 
-    .comparison-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
+    .status-log h3 {
+      margin-bottom: 8px;
     }
 
-    .mini-card {
-      background: #f8f8f8;
-      border: 1px solid #e3e3e3;
-      border-radius: 10px;
-      padding: 1rem;
+    .status-list {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
     }
 
-    .note {
-      background: #f3f7ff;
-      border-left: 5px solid #5b86e5;
-      padding: 1rem;
+    .stamp {
+      display: inline-block;
+      margin-top: 10px;
+      border: 2px solid var(--stamp);
+      color: var(--stamp);
       border-radius: 8px;
+      padding: 4px 10px;
+      transform: rotate(-4deg);
+      font-size: 0.85rem;
+      letter-spacing: 0.05em;
+    }
+
+    .marginalia {
+      font-size: 0.92rem;
+      color: var(--muted);
+      border-top: 1px dashed var(--border);
+      margin-top: 14px;
+      padding-top: 12px;
+      font-style: italic;
+    }
+
+    .compare-grid {
+      margin-top: 12px;
+    }
+
+    .note-card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(0,0,0,0.015));
     }
 
     footer {
-      margin-top: 2rem;
+      margin-top: 28px;
+      color: var(--muted);
       font-size: 0.95rem;
-      color: #555;
+      text-align: center;
     }
 
-    @media (max-width: 700px) {
-      .comparison-grid {
+    @media (max-width: 840px) {
+      .roles-grid, .compare-grid, .control-grid, .output-panel {
         grid-template-columns: 1fr;
       }
     }
   </style>
 </head>
-<body>
-  <header>
-    <h1>Then vs. Now: Fibonacci, Human Computers, and Formal Programs</h1>
-    <p class="subtitle">
-      I began with Fibonacci, but the real issue is what changes when calculation moves from a staff of human computers to a formal program. My artifact compares these two forms and asks whether programming actually removes ambiguity and human judgment, or merely hides them in another language.
-    </p>
-  </header>
+<body class="jones">
+  <div class="container">
+    <section class="header-card">
+      <h1>Then vs. Now: The Office of Calculation</h1>
+      <p class="subtitle">
+        I began with Fibonacci, but the real issue is what changes when calculation moves from a staff of human computers to a formal program. This artifact compares these two forms and asks whether programming actually removes ambiguity and human judgment, or merely hides them in another language.
+      </p>
+      <div class="toolbar">
+        <button class="alt" onclick="setMode('babbage')">Switch to Babbage Mode</button>
+        <button class="soft" onclick="setMode('jones')">Switch to Jones Mode</button>
+        <button onclick="setMode('neutral')">Neutral Mode</button>
+      </div>
+    </section>
 
-  <section class="section">
-    <h2>1. Why Fibonacci?</h2>
-    <p>
-      Fibonacci is simple enough to make the procedure visible. That simplicity lets this project focus less on mathematical difficulty and more on what changes when a calculation is organized through people versus through code.
-    </p>
-    <p>
-      In one form, Fibonacci becomes an office procedure with memory, roles, checking, and hierarchy. In another, it becomes a formal program with variables, rules, and repetition.
-    </p>
-  </section>
-
-  <section class="section">
-    <h2>2. Human Computers: A Manager’s Memo</h2>
-    <div class="memo">
+    <section class="section">
+      <div class="section-title">
+        <h2>1. Office Memorandum</h2>
+        <span class="badge">calculation as management</span>
+      </div>
+      <div class="memo">
 Office of Sequential Calculation
 Instructions for the Production of Fibonacci Numbers
 
@@ -161,109 +328,188 @@ Term 1 = 0
 Term 2 = 1
 
 For each succeeding term, the following division of labor shall be observed.
-    </div>
-
-    <button onclick="showNextRole()">Show office roles</button>
-    <button onclick="resetRoles()">Reset roles</button>
-
-    <div id="role1" class="role-card">
-      <strong>Clerk A: Keeper of the Previous Term</strong><br />
-      Retains the older of the two most recent values.
-    </div>
-
-    <div id="role2" class="role-card">
-      <strong>Clerk B: Keeper of the Current Term</strong><br />
-      Retains the newer of the two most recent values.
-    </div>
-
-    <div id="role3" class="role-card">
-      <strong>Clerk C: Summation Clerk</strong><br />
-      Adds the values supplied by Clerk A and Clerk B and enters the resulting sum as the next term in the ledger.
-    </div>
-
-    <div id="role4" class="role-card">
-      <strong>Clerk D: Verifying Clerk</strong><br />
-      Confirms that the new value equals the sum of the previous two values. No new step shall proceed until this verification is complete.
-    </div>
-
-    <div id="role5" class="role-card">
-      <strong>Clerk E: Advancement Clerk</strong><br />
-      Reassigns the previous current value as the new prior value and the new sum as the new current value. If an error is discovered, the office shall return to the last verified pair and recompute.
-    </div>
-  </section>
-
-  <section class="section">
-    <h2>3. Formal Program</h2>
-    <label for="termCount">Choose number of terms:</label>
-    <input type="number" id="termCount" min="1" value="10" />
-    <button onclick="showFibonacci()">Generate Fibonacci</button>
-    <button onclick="showFibMod7()">Generate Fibonacci mod 7</button>
-    <button onclick="showRuleChangeSequence()">When the Rule Changes</button>
-
-    <div id="output" class="output">Output will appear here.</div>
-  </section>
-
-  <section class="section">
-    <h2>4. When the Rule Changes</h2>
-    <p>
-      This sequence begins like Fibonacci, but after step 5 the rule changes. Instead of always adding the previous two terms in the same way, the program begins alternating between two procedures:
-    </p>
-    <ul>
-      <li>on even steps after 5, it adds the previous two terms normally</li>
-      <li>on odd steps after 5, it adds the previous two terms and reduces the result modulo 7</li>
-    </ul>
-    <p>
-      I use this not as a mathematically “correct” sequence, but as a model of rule instability or interpretive drift. In a human computing office, ambiguity can appear in how instructions are understood or applied. Formal code reduces that ambiguity, but it does not erase the human act of choosing the rule itself.
-    </p>
-  </section>
-
-  <section class="section">
-    <h2>5. Comparison</h2>
-    <div class="comparison-grid">
-      <div class="mini-card">
-        <h3>Manager’s Memo</h3>
-        <p>
-          Makes visible labor, hierarchy, memory, verification, accountability, and the possibility of misunderstanding.
-        </p>
       </div>
-      <div class="mini-card">
-        <h3>Formal Program</h3>
-        <p>
-          Makes visible rules, iteration, variables, and automation, while hiding most of the social structure required in the memo.
-        </p>
+
+      <div class="controls-row">
+        <button class="alt" onclick="showNextRole()">Show office roles</button>
+        <button class="soft" onclick="resetRoles()">Reset roles</button>
       </div>
-    </div>
-    <p>
-      The code looks cleaner, but that does not mean judgment disappears. It may simply be relocated into choices about definitions, assumptions, and design.
-    </p>
-  </section>
 
-  <section class="section">
-    <h2>6. Reflection</h2>
-    <p>
-      This project compares two forms of programming: a manager’s memo for a staff of human computers and a formal program that computes the same sequence automatically. I chose Fibonacci because it is simple enough to make the procedure easy to follow, which helped me focus on the real issue: what changes when calculation moves from people to code.
-    </p>
-    <p>
-      Writing the memo made me realize that human computation requires explicit organization. Someone has to remember prior values, someone has to add them, someone has to verify the result, and someone has to authorize the next step. In that setting, programming looks like management. By contrast, the formal program compresses memory, repetition, and control into variables and loops. It performs the same logic, but it hides the hierarchy and accountability that the memo has to spell out.
-    </p>
-    <p>
-      The “When the Rule Changes” sequence extends this comparison by showing what happens when the rule itself becomes less stable. It suggests that formal programming reduces ambiguity, but does not eliminate human judgment entirely. Judgment still enters through design, naming, rule choice, and what counts as correctness.
-    </p>
-  </section>
+      <div class="roles-grid" style="margin-top:14px;">
+        <div id="role1" class="role-card"><strong>Clerk A: Keeper of the Previous Term</strong><br>Retains the older of the two most recent values.</div>
+        <div id="role2" class="role-card"><strong>Clerk B: Keeper of the Current Term</strong><br>Retains the newer of the two most recent values.</div>
+        <div id="role3" class="role-card"><strong>Clerk C: Summation Clerk</strong><br>Adds the values from Clerk A and Clerk B and enters the next term.</div>
+        <div id="role4" class="role-card"><strong>Clerk D: Verifying Clerk</strong><br>Confirms that the new value equals the sum of the previous two. No further step proceeds until verified.</div>
+        <div id="role5" class="role-card"><strong>Clerk E: Advancement Clerk</strong><br>Advances the ledger and restores order after error or dispute.</div>
+      </div>
 
-  <section class="section">
-    <h2>7. Final Note on Jones</h2>
-    <div class="note">
-      Matt Jones helped me frame this project by pushing against the idea that programming is pure, disembodied thought. In this reading, programming is not simply clean logic detached from people. It is iterative, social, and craft-like work. That matters here because the shift from memo to code does not erase human judgment completely; it reorganizes where that judgment lives.
-    </div>
-  </section>
+      <div class="marginalia" id="memoNote">
+        Marginal note: In a human office, memory and verification must be assigned to people, not hidden inside variables.
+      </div>
+    </section>
 
-  <footer>
-    Built for Week 3: Computer Programming.
-  </footer>
+    <section class="section">
+      <div class="section-title">
+        <h2>2. Formal Program Console</h2>
+        <span class="badge">calculation as code</span>
+      </div>
+
+      <div class="control-grid">
+        <div class="control-card">
+          <label for="termCount">Choose number of terms</label>
+          <input type="number" id="termCount" min="1" value="10" />
+          <div class="controls-row">
+            <button onclick="showFibonacci()">Generate Fibonacci</button>
+            <button class="alt" onclick="showFibMod7()">Fibonacci mod 7</button>
+            <button class="soft" onclick="showRuleChangeSequence()">When the Rule Changes</button>
+          </div>
+        </div>
+
+        <div class="control-card">
+          <h3>Interruptions</h3>
+          <p>Use these to make the office feel less pure and more human.</p>
+          <div class="controls-row">
+            <button class="alt" onclick="disputeResult()">Dispute the Result</button>
+            <button class="soft" onclick="happyAccident()">Happy Accident</button>
+            <button onclick="clearLog()">Clear Annotations</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="output-panel">
+        <div class="output" id="output">Output will appear here.</div>
+        <div class="status-log">
+          <h3>Office Annotations</h3>
+          <ul class="status-list" id="statusList">
+            <li>Jones mode active: procedure is provisional, iterative, and social.</li>
+          </ul>
+          <div id="stampBox" class="stamp">PROVISIONALLY ACCEPTED</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <h2>3. When the Rule Changes</h2>
+        <span class="badge">rule instability</span>
+      </div>
+      <p>
+        This sequence begins like Fibonacci, but after step 5 the rule changes. Instead of always adding the previous two terms in the same way, the procedure starts alternating between ordinary addition and addition modulo 7.
+      </p>
+      <p>
+        I use this not as a mathematically “correct” sequence, but as a model of rule instability or interpretive drift. In a human computing office, ambiguity can appear in how instructions are understood or applied. Formal code reduces that ambiguity, but it does not erase the human act of choosing the rule itself.
+      </p>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <h2>4. Comparison</h2>
+        <span class="badge">what becomes visible?</span>
+      </div>
+      <div class="compare-grid">
+        <div class="mini-card">
+          <h3>Manager’s Memo</h3>
+          <p>Makes visible labor, hierarchy, memory, verification, accountability, and disagreement.</p>
+        </div>
+        <div class="mini-card">
+          <h3>Formal Program</h3>
+          <p>Makes visible explicit procedure, iteration, and automation while hiding the social structure the memo must expose.</p>
+        </div>
+        <div class="mini-card">
+          <h3>Dispute</h3>
+          <p>Shows that certainty can be procedural, political, or merely provisional.</p>
+        </div>
+        <div class="mini-card">
+          <h3>Happy Accident</h3>
+          <p>Suggests that not every deviation is failure; some become novelty.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">
+        <h2>5. Final Note on Jones</h2>
+        <span class="badge">programming is not pure thought</span>
+      </div>
+      <div class="note-card">
+        Matt Jones helped me frame this project by pushing against the idea that programming is pure, disembodied thought. In this reading, programming is not simply clean logic detached from people. It is iterative, social, and craft-like work. That matters here because the shift from memo to code does not erase human judgment completely; it reorganizes where that judgment lives.
+      </div>
+    </section>
+
+    <footer>
+      Built for Week 3: Computer Programming.
+    </footer>
+  </div>
 
   <script>
     let currentRole = 0;
+    let currentMode = "jones";
+    let lastSequence = [];
+
+    const disputes = [
+      "The Verifier objects: the ledger preserves a result, but not the reasoning.",
+      "A clerk notes that the rule was followed, but the instruction may have been misread.",
+      "The office records a procedural disagreement: correctness has been contested, not disproven.",
+      "A dissenting note appears in the margin: the sum is accepted administratively, not philosophically."
+    ];
+
+    const jonesNotes = [
+      "Patch applied: role boundaries were less stable than expected.",
+      "Verification delayed; office proceeded on trust.",
+      "Instruction clarified after partial misunderstanding.",
+      "The sequence was not merely executed; it was negotiated."
+    ];
+
+    const babbageNotes = [
+      "Procedure stabilized under formal discipline.",
+      "Irregularity minimized; sequence restored to order.",
+      "Human interference reduced; machine logic preferred.",
+      "All ambiguity relocated to rule definition."
+    ];
+
+    function setMode(mode) {
+      const body = document.body;
+      body.classList.remove("babbage", "jones");
+
+      if (mode === "babbage") {
+        body.classList.add("babbage");
+        currentMode = "babbage";
+        setStamp("MECHANICALLY VERIFIED");
+        addStatus("Babbage mode active: stricter order, cleaner law, less visible friction.");
+        document.getElementById("memoNote").textContent =
+          "Marginal note: In Babbage mode, system and order take precedence over improvisation.";
+      } else if (mode === "jones") {
+        body.classList.add("jones");
+        currentMode = "jones";
+        setStamp("PROVISIONALLY ACCEPTED");
+        addStatus("Jones mode active: procedure is provisional, iterative, and social.");
+        document.getElementById("memoNote").textContent =
+          "Marginal note: In Jones mode, programming is visible as coordination, repair, and craft.";
+      } else {
+        currentMode = "neutral";
+        setStamp("RECORDED");
+        addStatus("Neutral mode active: neither office fantasy fully wins.");
+        document.getElementById("memoNote").textContent =
+          "Marginal note: Formal systems may reduce ambiguity, but do not eliminate design choices.";
+      }
+    }
+
+    function setStamp(text) {
+      document.getElementById("stampBox").textContent = text;
+    }
+
+    function addStatus(text) {
+      const ul = document.getElementById("statusList");
+      const li = document.createElement("li");
+      li.textContent = text;
+      ul.prepend(li);
+    }
+
+    function clearLog() {
+      const ul = document.getElementById("statusList");
+      ul.innerHTML = "";
+      addStatus("Annotations cleared. Office memory partially reset.");
+    }
 
     function showNextRole() {
       const roles = [
@@ -273,94 +519,135 @@ For each succeeding term, the following division of labor shall be observed.
         document.getElementById("role4"),
         document.getElementById("role5")
       ];
-
       if (currentRole < roles.length) {
         roles[currentRole].classList.add("visible");
+        addStatus(`Role revealed: ${roles[currentRole].textContent.trim().slice(0, 36)}...`);
         currentRole++;
       }
     }
 
     function resetRoles() {
-      const roles = document.querySelectorAll(".role-card");
-      roles.forEach(role => role.classList.remove("visible"));
+      document.querySelectorAll(".role-card").forEach(card => card.classList.remove("visible"));
       currentRole = 0;
+      addStatus("Office roles concealed. Bureaucratic structure hidden again.");
+    }
+
+    function getTermCount() {
+      const n = parseInt(document.getElementById("termCount").value, 10);
+      return (!isNaN(n) && n > 0) ? n : 10;
     }
 
     function fibonacci(n) {
       if (n <= 0) return [];
       if (n === 1) return [0];
-
-      const sequence = [0, 1];
-      while (sequence.length < n) {
-        const nextValue = sequence[sequence.length - 1] + sequence[sequence.length - 2];
-        sequence.push(nextValue);
+      const seq = [0, 1];
+      while (seq.length < n) {
+        seq.push(seq[seq.length - 1] + seq[seq.length - 2]);
       }
-      return sequence;
+      return seq;
     }
 
     function fibonacciMod7(n) {
       if (n <= 0) return [];
       if (n === 1) return [0];
-
-      const sequence = [0, 1];
-      while (sequence.length < n) {
-        const nextValue = (sequence[sequence.length - 1] + sequence[sequence.length - 2]) % 7;
-        sequence.push(nextValue);
+      const seq = [0, 1];
+      while (seq.length < n) {
+        seq.push((seq[seq.length - 1] + seq[seq.length - 2]) % 7);
       }
-      return sequence;
+      return seq;
     }
 
     function ruleChangeSequence(n) {
       if (n <= 0) return [];
       if (n === 1) return [0];
-
-      const sequence = [0, 1];
-
-      while (sequence.length < n) {
-        const stepNumber = sequence.length + 1;
-        let nextValue = sequence[sequence.length - 1] + sequence[sequence.length - 2];
-
-        if (stepNumber > 5) {
-          if (stepNumber % 2 !== 0) {
-            nextValue = nextValue % 7;
-          }
+      const seq = [0, 1];
+      while (seq.length < n) {
+        const stepNumber = seq.length + 1;
+        let next = seq[seq.length - 1] + seq[seq.length - 2];
+        if (stepNumber > 5 && stepNumber % 2 !== 0) {
+          next = next % 7;
         }
-
-        sequence.push(nextValue);
+        seq.push(next);
       }
-
-      return sequence;
+      return seq;
     }
 
-    function getTermCount() {
-      const input = document.getElementById("termCount");
-      const n = parseInt(input.value, 10);
-      if (isNaN(n) || n < 1) return 10;
-      return n;
+    function displaySequence(title, seq, note) {
+      lastSequence = [...seq];
+      document.getElementById("output").textContent =
+        `${title}\n\n${seq.join(", ")}\n\n${note}`;
     }
 
     function showFibonacci() {
       const n = getTermCount();
-      const result = fibonacci(n);
-      document.getElementById("output").textContent =
-        `Fibonacci (${n} terms):\n` + result.join(", ");
+      const seq = fibonacci(n);
+      displaySequence(
+        `Fibonacci (${n} terms)`,
+        seq,
+        currentMode === "babbage"
+          ? "Mode note: Procedure rendered as stable formal law."
+          : "Mode note: Stable rule, but still dependent on prior human design."
+      );
+      addStatus(currentMode === "babbage"
+        ? babbageNotes[Math.floor(Math.random() * babbageNotes.length)]
+        : jonesNotes[Math.floor(Math.random() * jonesNotes.length)]);
     }
 
     function showFibMod7() {
       const n = getTermCount();
-      const result = fibonacciMod7(n);
-      document.getElementById("output").textContent =
-        `Fibonacci mod 7 (${n} terms):\n` + result.join(", ");
+      const seq = fibonacciMod7(n);
+      displaySequence(
+        `Fibonacci mod 7 (${n} terms)`,
+        seq,
+        "A slight change in the rule produces a visibly different pattern."
+      );
+      addStatus("Remainder arithmetic applied: same office, different law.");
     }
 
     function showRuleChangeSequence() {
       const n = getTermCount();
-      const result = ruleChangeSequence(n);
-      document.getElementById("output").textContent =
-        `When the rule changes (${n} terms):\n` +
-        result.join(", ") +
-        `\n\nRule: Fibonacci through step 5, then alternating between normal addition and addition mod 7.`;
+      const seq = ruleChangeSequence(n);
+      displaySequence(
+        `When the Rule Changes (${n} terms)`,
+        seq,
+        "Rule: Fibonacci through step 5, then alternating between ordinary addition and addition mod 7."
+      );
+      addStatus("Rule drift introduced. Interpretation has re-entered the sequence.");
+      setStamp(currentMode === "babbage" ? "RULE REVISED" : "CONTESTED PROCEDURE");
     }
+
+    function disputeResult() {
+      const msg = disputes[Math.floor(Math.random() * disputes.length)];
+      addStatus(msg);
+      setStamp("DISPUTED");
+      if (lastSequence.length > 0) {
+        document.getElementById("output").textContent +=
+          `\n\n[Dispute entered into the ledger]\n${msg}`;
+      }
+    }
+
+    function happyAccident() {
+      const n = getTermCount();
+      if (n <= 0) return;
+      const seq = [0, 1];
+      while (seq.length < n) {
+        let next;
+        if (seq.length === 4 || seq.length === 8) {
+          next = seq[seq.length - 1];
+        } else {
+          next = seq[seq.length - 1] + seq[seq.length - 2];
+        }
+        seq.push(next);
+      }
+      lastSequence = [...seq];
+      document.getElementById("output").textContent =
+        `Happy Accident (${n} terms)\n\n${seq.join(", ")}\n\n` +
+        "An error, pause, or repetition has produced a variant sequence. Not every deviation is mere failure; some become novelty.";
+      addStatus("Innovation discovered through clerical deviation.");
+      setStamp("ACCIDENT RETAINED");
+    }
+
+    setMode("jones");
   </script>
 </body>
 </html>
