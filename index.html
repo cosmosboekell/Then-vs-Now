@@ -1,772 +1,844 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Threshold for a Strike</title>
-  <style>
-    :root {
-      --bg: #07090d;
-      --bg2: #0d131a;
-      --panel: rgba(17, 24, 32, 0.92);
-      --panel2: rgba(23, 31, 41, 0.96);
-      --line: rgba(180, 198, 216, 0.16);
-      --text: #eef3f8;
-      --muted: #9eacbc;
-      --accent: #8fb6d8;
-      --warn: #d7b36a;
-      --danger: #e07070;
-      --ok: #77c18b;
-      --shadow: 0 24px 50px rgba(0,0,0,0.4);
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Same Strike — Human Committee vs. Formal Program</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    * { box-sizing: border-box; }
+:root {
+  --bg: #080808;
+  --surface: #0F0F0F;
+  --surface2: #151515;
+  --surface3: #1A1A1A;
+  --border: rgba(255,255,255,0.06);
+  --border2: rgba(255,255,255,0.11);
+  --border3: rgba(255,255,255,0.18);
+  --text: #D8D4CC;
+  --text-mid: #7A756E;
+  --text-dim: #3D3A36;
+  --text-faint: #252320;
+  --system: #4A8FA8;
+  --system-dim: rgba(74,143,168,0.13);
+  --system-border: rgba(74,143,168,0.35);
+  --red: #B33A2A;
+  --red-dim: rgba(179,58,42,0.12);
+  --red-border: rgba(179,58,42,0.35);
+  --red-bright: #E04530;
+  --amber: #A07830;
+  --amber-dim: rgba(160,120,48,0.12);
+  --amber-border: rgba(160,120,48,0.3);
+  --green: #2A7A4A;
+  --green-dim: rgba(42,122,74,0.12);
+  --green-border: rgba(42,122,74,0.3);
+  --mono: 'IBM Plex Mono', monospace;
+}
 
-    body {
-      margin: 0;
-      font-family: Georgia, serif;
-      color: var(--text);
-      background:
-        radial-gradient(circle at 15% 10%, rgba(143,182,216,0.09), transparent 20%),
-        radial-gradient(circle at 85% 15%, rgba(224,112,112,0.07), transparent 18%),
-        linear-gradient(180deg, var(--bg), var(--bg2));
-      min-height: 100vh;
-    }
+html, body {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.7;
+  cursor: default;
+}
 
-    .container {
-      max-width: 1360px;
-      margin: 0 auto;
-      padding: 24px 18px 56px;
-    }
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.014) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
 
-    .hero, .panel, .reflection {
-      border: 1px solid var(--line);
-      border-radius: 22px;
-      background: linear-gradient(180deg, var(--panel), var(--panel2));
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(10px);
-    }
+.wrap {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5rem 1.5rem;
+}
 
-    .hero {
-      padding: 30px;
-      margin-bottom: 18px;
-      position: relative;
-      overflow: hidden;
-    }
+.screen { display: none; width: 100%; max-width: 660px; animation: appear 0.45s ease forwards; }
+.screen.active { display: flex; flex-direction: column; }
 
-    .hero::after {
-      content: "UNCERTAINTY · THRESHOLD · AUTHORIZATION";
-      position: absolute;
-      top: 18px;
-      right: 18px;
-      border: 1px solid var(--line);
-      color: var(--muted);
-      border-radius: 999px;
-      padding: 6px 10px;
-      font-size: 0.74rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      background: rgba(255,255,255,0.03);
-    }
+@keyframes appear {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
-    .eyebrow {
-      display: inline-block;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      padding: 6px 11px;
-      color: var(--muted);
-      font-size: 0.78rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      margin-bottom: 14px;
-      background: rgba(255,255,255,0.03);
-    }
+/* ── TOPBAR ── */
+.topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 28px;
+  border-bottom: 0.5px solid var(--border);
+  background: rgba(8,8,8,0.92);
+  backdrop-filter: blur(8px);
+}
 
-    h1, h2, h3, h4 {
-      line-height: 1.1;
-      margin-top: 0;
-    }
+.topbar-left { font-size: 11px; color: var(--text-dim); letter-spacing: 0.1em; }
+.topbar-right { font-size: 11px; color: var(--text-dim); letter-spacing: 0.06em; }
 
-    h1 {
-      font-size: clamp(2.3rem, 5vw, 3.9rem);
-      letter-spacing: -0.03em;
-      margin-bottom: 10px;
-      max-width: 860px;
-    }
+/* ── MODE PILLS ── */
+.mode-pill {
+  display: inline-block;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  padding: 3px 10px;
+  border-radius: 2px;
+  border: 0.5px solid;
+  margin-bottom: 1.5rem;
+}
 
-    .subtitle {
-      color: var(--muted);
-      max-width: 930px;
-      font-size: 1.08rem;
-      margin: 0;
-    }
+.pill-human { border-color: var(--system-border); color: var(--system); background: var(--system-dim); }
+.pill-algo { border-color: var(--red-border); color: var(--red-bright); background: var(--red-dim); }
+.pill-intro { border-color: var(--border2); color: var(--text-mid); background: transparent; }
 
-    .hero-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 20px;
-    }
+/* ── INTRO ── */
+.intro-eyebrow {
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+  margin-bottom: 3rem;
+}
 
-    button {
-      border: none;
-      border-radius: 14px;
-      padding: 12px 16px;
-      font: inherit;
-      font-weight: 700;
-      cursor: pointer;
-      transition: transform 0.14s ease, opacity 0.14s ease;
-      background: var(--accent);
-      color: #0b1218;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.25);
-    }
+.intro-title {
+  font-size: clamp(48px, 11vw, 82px);
+  font-weight: 300;
+  line-height: 1.0;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  margin-bottom: 0.5rem;
+}
 
-    button:hover {
-      transform: translateY(-1px);
-      opacity: 0.95;
-    }
+.intro-italic {
+  font-style: italic;
+  color: var(--text-mid);
+}
 
-    button.secondary { background: #c4d2df; }
-    button.warn { background: var(--warn); color: #24190a; }
-    button.danger { background: var(--danger); color: white; }
-    button.dark { background: #21303f; color: var(--text); }
+.intro-sub {
+  font-size: 13px;
+  color: var(--text-mid);
+  font-style: italic;
+  margin-bottom: 3rem;
+}
 
-    .main-grid {
-      display: grid;
-      grid-template-columns: 1fr 0.9fr 1fr;
-      gap: 18px;
-      align-items: start;
-    }
+.case-file {
+  background: var(--surface);
+  border: 0.5px solid var(--border2);
+  border-radius: 2px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 2.5rem;
+}
 
-    .panel {
-      padding: 18px;
-      min-height: 560px;
-    }
+.case-file-header {
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+  padding-bottom: 10px;
+  border-bottom: 0.5px solid var(--border);
+  margin-bottom: 12px;
+}
 
-    .small {
-      color: var(--muted);
-      font-size: 0.93rem;
-    }
+.case-facts {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
 
-    .scenario-box, .weights-box, .log-box, .analyst-box, .program-box {
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 14px;
-      background: rgba(255,255,255,0.03);
-      margin-top: 14px;
-    }
+.fact { display: flex; flex-direction: column; gap: 2px; }
+.fact-label { font-size: 10px; color: var(--text-dim); letter-spacing: 0.08em; }
+.fact-val { font-size: 13px; color: var(--text); }
 
-    .scenario-item {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 9px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-    }
+.intro-body {
+  font-size: 12px;
+  color: var(--text-mid);
+  line-height: 1.85;
+  margin-bottom: 2.5rem;
+  border-left: 1px solid var(--border2);
+  padding-left: 1.25rem;
+}
 
-    .scenario-item:last-child {
-      border-bottom: none;
-    }
+/* ── BUTTONS ── */
+.btn {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  padding: 9px 20px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: 0.5px solid;
+  background: transparent;
+}
 
-    .scenario-label {
-      color: var(--muted);
-      font-weight: 700;
-    }
+.btn:hover { filter: brightness(1.15); }
+.btn:active { transform: scale(0.98); }
+.btn:disabled { opacity: 0.25; cursor: not-allowed; transform: none; filter: none; }
 
-    .note {
-      border-left: 4px solid var(--warn);
-      border-radius: 12px;
-      padding: 12px;
-      background: rgba(255,255,255,0.04);
-      margin-bottom: 10px;
-      color: #f0f4f8;
-    }
+.btn-system {
+  border-color: var(--system-border);
+  color: var(--system);
+}
 
-    .note strong {
-      color: var(--warn);
-    }
+.btn-system:hover { background: var(--system-dim); }
 
-    .decision-stage {
-      display: grid;
-      place-items: center;
-      min-height: 220px;
-      border: 1px solid var(--line);
-      border-radius: 22px;
-      margin-top: 14px;
-      background:
-        radial-gradient(circle at 50% 35%, rgba(143,182,216,0.08), transparent 38%),
-        linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      text-align: center;
-      padding: 18px;
-    }
+.btn-outline {
+  border-color: var(--border2);
+  color: var(--text-mid);
+}
 
-    .stage-label {
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      font-size: 0.76rem;
-      margin-bottom: 8px;
-    }
+.btn-outline:hover { background: var(--surface2); border-color: var(--border3); color: var(--text); }
 
-    .verdict-big {
-      font-size: clamp(2rem, 4vw, 3.5rem);
-      letter-spacing: 0.04em;
-      font-weight: 800;
-      margin: 0;
-    }
+/* ── SECTION HEADER ── */
+.section-header { margin-bottom: 1.5rem; }
 
-    .verdict-sub {
-      margin-top: 8px;
-      color: var(--muted);
-      max-width: 360px;
-    }
+.section-title {
+  font-size: 22px;
+  font-weight: 300;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  margin-bottom: 6px;
+}
 
-    .hold { color: var(--warn); }
-    .review { color: var(--accent); }
-    .authorized { color: var(--danger); }
-    .aborted { color: var(--ok); }
+.section-sub {
+  font-size: 12px;
+  color: var(--text-mid);
+  line-height: 1.65;
+  max-width: 560px;
+}
 
-    .metric-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 14px;
-    }
+/* ── MEMBER CARDS ── */
+.member-card {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: 2px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 8px;
+  opacity: 0;
+  transform: translateY(5px);
+  transition: opacity 0.4s, transform 0.4s;
+}
 
-    .metric {
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 12px;
-      background: rgba(255,255,255,0.03);
-    }
+.member-card.visible { opacity: 1; transform: translateY(0); }
 
-    .metric h4 {
-      margin-bottom: 6px;
-      color: var(--muted);
-      font-size: 0.82rem;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-    }
+.member-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
 
-    .metric-value {
-      font-family: "Courier New", monospace;
-      font-size: 1.4rem;
-    }
+.member-name { font-size: 13px; font-weight: 400; color: var(--text); }
+.member-role { font-size: 10px; color: var(--text-dim); letter-spacing: 0.07em; margin-top: 2px; }
 
-    .bars {
-      display: grid;
-      gap: 10px;
-      margin-top: 14px;
-    }
+.vote-chip {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  padding: 3px 9px;
+  border-radius: 2px;
+  border: 0.5px solid;
+  flex-shrink: 0;
+}
 
-    .bar-row {
-      display: grid;
-      grid-template-columns: 140px 1fr 56px;
-      gap: 10px;
-      align-items: center;
-      font-size: 0.9rem;
-    }
+.vote-auth { border-color: var(--red-border); color: var(--red-bright); }
+.vote-obj { border-color: var(--system-border); color: var(--system); }
+.vote-defer { border-color: var(--border2); color: var(--text-dim); }
 
-    .bar-label {
-      color: var(--muted);
-    }
+.member-speech {
+  font-size: 12px;
+  color: var(--text-mid);
+  line-height: 1.75;
+  font-style: italic;
+  border-left: 1px solid var(--border2);
+  padding-left: 10px;
+  margin-bottom: 8px;
+}
 
-    .bar-track {
-      height: 12px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.05);
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.06);
-    }
+.flag {
+  display: inline-block;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  padding: 2px 8px;
+  border-radius: 2px;
+  border: 0.5px solid;
+  margin-top: 2px;
+}
 
-    .bar-fill {
-      height: 100%;
-      width: 0%;
-      border-radius: 999px;
-      transition: width 0.8s ease;
-    }
+.flag-bias { border-color: var(--amber-border); color: var(--amber); background: var(--amber-dim); }
+.flag-nested { border-color: var(--red-border); color: var(--red-bright); background: var(--red-dim); }
 
-    .blue { background: linear-gradient(90deg, #628cab, #8fb6d8); }
-    .red { background: linear-gradient(90deg, #a35252, #e07070); }
-    .gold { background: linear-gradient(90deg, #a78443, #d7b36a); }
-    .green { background: linear-gradient(90deg, #578a67, #77c18b); }
+/* ── STEP NAV ── */
+.step-nav { display: flex; align-items: center; gap: 12px; margin-top: 1rem; }
+.step-label { font-size: 11px; color: var(--text-dim); }
 
-    .threshold-box {
-      margin-top: 14px;
-      padding-top: 14px;
-      border-top: 1px dashed rgba(255,255,255,0.1);
-    }
+/* ── TALLY ── */
+.tally {
+  background: var(--surface);
+  border: 0.5px solid var(--border2);
+  border-radius: 2px;
+  padding: 1rem 1.5rem;
+  margin-top: 1rem;
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
 
-    .threshold-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 8px;
-      flex-wrap: wrap;
-    }
+.tally-item { display: flex; flex-direction: column; }
+.tally-n { font-size: 28px; font-weight: 300; color: var(--text); line-height: 1; }
+.tally-lbl { font-size: 10px; color: var(--text-dim); letter-spacing: 0.08em; margin-top: 3px; }
 
-    input[type="range"] {
-      width: 100%;
-    }
+.outcome-bar { height: 2px; background: var(--border); margin-top: 1rem; }
+.outcome-fill { height: 100%; background: var(--red); transition: width 0.9s ease; }
 
-    .weights-box ul, .log-box ul {
-      margin: 10px 0 0;
-      padding-left: 18px;
-    }
+.callout {
+  border-radius: 2px;
+  padding: 10px 14px;
+  font-size: 11px;
+  line-height: 1.8;
+  margin-top: 1rem;
+}
 
-    .weights-box li, .log-box li {
-      margin-bottom: 8px;
-      color: var(--muted);
-    }
+.callout-system {
+  background: var(--system-dim);
+  border-left: 2px solid var(--system);
+  color: var(--text-mid);
+}
 
-    .reflection {
-      margin-top: 20px;
-      padding: 22px;
-    }
+.callout-nested {
+  background: var(--red-dim);
+  border: 0.5px solid var(--red-border);
+  border-left: 2px solid var(--red-bright);
+  color: var(--text-mid);
+}
 
-    .footer-note {
-      color: var(--muted);
-      margin-top: 10px;
-      font-style: italic;
-    }
+.callout-label {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  margin-bottom: 5px;
+}
 
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.64);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 18px;
-      z-index: 1000;
-    }
+.callout-system .callout-label { color: var(--system); }
+.callout-nested .callout-label { color: var(--red-bright); }
 
-    .modal {
-      width: 100%;
-      max-width: 620px;
-      border: 1px solid var(--line);
-      border-radius: 20px;
-      background: linear-gradient(180deg, var(--panel), var(--panel2));
-      box-shadow: var(--shadow);
-      padding: 22px;
-    }
+/* ── ALGORITHM ── */
+.algo-table {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
 
-    .modal-actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 18px;
-    }
+.algo-table-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 7px 14px;
+  background: var(--surface2);
+  border-bottom: 0.5px solid var(--border2);
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 0.08em;
+}
 
-    @media (max-width: 1100px) {
-      .main-grid {
-        grid-template-columns: 1fr;
-      }
-      .panel {
-        min-height: auto;
-      }
-    }
+.algo-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 10px 14px;
+  border-bottom: 0.5px solid var(--border);
+  gap: 12px;
+  opacity: 0;
+  transition: opacity 0.4s;
+}
 
-    @media (max-width: 760px) {
-      .metric-grid {
-        grid-template-columns: 1fr;
-      }
-      .bar-row {
-        grid-template-columns: 1fr;
-      }
-      h1 {
-        font-size: 2.2rem;
-      }
-    }
-  </style>
+.algo-row.visible { opacity: 1; }
+.algo-row:last-child { border-bottom: none; }
+
+.algo-var { flex: 1; }
+.algo-var-name { font-size: 12px; color: var(--text); margin-bottom: 3px; }
+.algo-var-note { font-size: 11px; color: var(--text-dim); line-height: 1.6; }
+
+.algo-nums { display: flex; gap: 24px; align-items: flex-start; flex-shrink: 0; }
+.algo-weight { font-size: 10px; color: var(--text-dim); min-width: 44px; text-align: right; }
+.algo-score { font-size: 17px; font-weight: 300; color: var(--text); min-width: 36px; text-align: right; }
+
+.algo-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  background: var(--surface2);
+  border-top: 0.5px solid var(--border2);
+}
+
+.algo-total-label { font-size: 11px; color: var(--text-mid); letter-spacing: 0.06em; }
+.algo-total-score { font-size: 32px; font-weight: 300; color: var(--red-bright); letter-spacing: -0.02em; }
+.algo-total-sub { font-size: 10px; color: var(--red); letter-spacing: 0.06em; margin-top: 2px; }
+
+.redact {
+  display: inline-block;
+  background: var(--surface3);
+  color: var(--surface3);
+  border-radius: 1px;
+  padding: 0 4px;
+  user-select: none;
+  border: 0.5px solid var(--border2);
+}
+
+/* ── COMPARE ── */
+.compare-grid {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+  gap: 10px;
+  margin: 1rem 0 1.25rem;
+}
+
+.compare-col {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: 2px;
+  padding: 1rem 1.25rem;
+}
+
+.compare-heading {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  padding-bottom: 8px;
+  border-bottom: 0.5px solid var(--border2);
+  margin-bottom: 10px;
+}
+
+.ch-human { color: var(--system); }
+.ch-algo { color: var(--red-bright); }
+
+.cq { font-size: 10px; color: var(--text-dim); letter-spacing: 0.06em; margin: 10px 0 3px; }
+.ca { font-size: 11px; color: var(--text-mid); line-height: 1.6; }
+.ca-good { color: var(--system); }
+.ca-bad { color: var(--red-bright); }
+.ca-warn { color: var(--amber); }
+
+/* ── THESIS / CODA ── */
+.thesis {
+  font-size: 15px;
+  font-style: italic;
+  font-weight: 300;
+  color: var(--text-mid);
+  line-height: 1.85;
+  border-top: 0.5px solid var(--border2);
+  padding-top: 1.5rem;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.coda {
+  font-size: 11px;
+  color: var(--text-dim);
+  line-height: 2;
+  border-top: 0.5px solid var(--border);
+  padding-top: 1.25rem;
+}
+
+/* ── FOOTER ── */
+.site-footer {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  padding: 12px 28px;
+  border-top: 0.5px solid var(--border);
+  background: rgba(8,8,8,0.92);
+  backdrop-filter: blur(8px);
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 0.06em;
+  display: flex;
+  justify-content: space-between;
+}
+
+@media (max-width: 540px) {
+  .compare-grid { grid-template-columns: 1fr; }
+  .intro-title { font-size: 48px; }
+  .topbar, .site-footer { padding: 11px 16px; }
+  .case-facts { gap: 1rem; }
+}
+</style>
 </head>
 <body>
-  <div class="container">
-    <section class="hero">
-      <div class="eyebrow">Week 3 · Formalization of Judgment</div>
-      <h1>Threshold for a Strike</h1>
-      <p class="subtitle">
-        This artifact stages the same lethal decision in two forms: as human deliberation and as formal scoring. The question is not whether the machine is “better.” The question is what happens when uncertainty is translated into categories, confidence levels, and thresholds that look objective.
-      </p>
 
-      <div class="hero-actions">
-        <button onclick="loadScenario()">Load Scenario</button>
-        <button class="secondary" onclick="hearAnalysts()">Hear the Analysts</button>
-        <button onclick="runProgram()">Run the Program</button>
-        <button class="warn" onclick="revealAssumptions()">Reveal Hidden Assumptions</button>
-        <button class="dark" onclick="delayDecision()">Delay Decision</button>
-        <button class="danger" onclick="humanOverride()">Human Override</button>
+<div class="topbar">
+  <div class="topbar-left">THE SAME STRIKE</div>
+  <div class="topbar-right" id="topbar-right">—</div>
+</div>
+
+<div class="wrap">
+
+  <!-- S0: Intro -->
+  <div class="screen active" id="s0">
+    <div class="intro-eyebrow">A philosophical artifact &nbsp;·&nbsp; Week 3</div>
+    <div class="intro-title">The Same<br><span class="intro-italic">Strike</span></div>
+    <div class="intro-sub" style="margin-top:8px;">Human committee. Formal program. Identical outcome.</div>
+    <div class="case-file">
+      <div class="case-file-header">CASE FILE</div>
+      <div style="font-size:11px;color:var(--text-mid);line-height:1.85;margin-bottom:14px;">
+        An individual has been flagged by pattern-of-life analysis over thirty-one days. A strike authorization is requested. Two systems will process this request. The individual, the intelligence package, and the outcome are the same in both cases.
       </div>
-    </section>
-
-    <section class="main-grid">
-      <section class="panel">
-        <h2>Human Deliberation</h2>
-        <p class="small">Conflicting interpretation, caution, pressure, incomplete evidence.</p>
-
-        <div class="scenario-box">
-          <h3>Scenario Dossier</h3>
-          <div id="scenarioFields"></div>
-        </div>
-
-        <div id="analystNotes" class="analyst-box">
-          <div class="note"><strong>Status:</strong> Awaiting analyst review.</div>
-        </div>
-      </section>
-
-      <section class="panel">
-        <h2>Decision Chamber</h2>
-        <p class="small">The central question is not just what the system recommends, but who owns the judgment.</p>
-
-        <div class="decision-stage">
-          <div>
-            <div class="stage-label">Current Recommendation</div>
-            <p id="verdictBig" class="verdict-big review">REVIEW</p>
-            <div id="verdictSub" class="verdict-sub">
-              Awaiting scenario and scoring.
-            </div>
-          </div>
-        </div>
-
-        <div class="threshold-box">
-          <div class="threshold-row">
-            <strong>Authorization Threshold</strong>
-            <span id="thresholdValue">78</span>
-          </div>
-          <input type="range" id="thresholdSlider" min="50" max="95" value="78" oninput="updateThreshold()" />
-          <p class="small">Small threshold changes can transform the outcome while preserving the appearance of procedural neutrality.</p>
-        </div>
-
-        <div class="log-box">
-          <h3>Decision Log</h3>
-          <ul id="decisionLog">
-            <li>System initialized.</li>
-          </ul>
-        </div>
-      </section>
-
-      <section class="panel">
-        <h2>Formal Program</h2>
-        <p class="small">Uncertainty converted into scores, confidence, and thresholds.</p>
-
-        <div class="program-box">
-          <div class="metric-grid">
-            <div class="metric">
-              <h4>Target Likelihood</h4>
-              <div id="targetLikelihood" class="metric-value">--</div>
-            </div>
-            <div class="metric">
-              <h4>Civilian Risk</h4>
-              <div id="civilianRisk" class="metric-value">--</div>
-            </div>
-            <div class="metric">
-              <h4>Confidence</h4>
-              <div id="confidenceScore" class="metric-value">--</div>
-            </div>
-            <div class="metric">
-              <h4>Time Pressure</h4>
-              <div id="timePressure" class="metric-value">--</div>
-            </div>
-          </div>
-
-          <div class="bars">
-            <div class="bar-row">
-              <div class="bar-label">Pattern Match</div>
-              <div class="bar-track"><div id="barPattern" class="bar-fill blue"></div></div>
-              <div id="barPatternVal" class="small">--</div>
-            </div>
-            <div class="bar-row">
-              <div class="bar-label">Image Certainty</div>
-              <div class="bar-track"><div id="barImage" class="bar-fill gold"></div></div>
-              <div id="barImageVal" class="small">--</div>
-            </div>
-            <div class="bar-row">
-              <div class="bar-label">Civilian Presence</div>
-              <div class="bar-track"><div id="barCivilian" class="bar-fill red"></div></div>
-              <div id="barCivilianVal" class="small">--</div>
-            </div>
-            <div class="bar-row">
-              <div class="bar-label">Urgency Signal</div>
-              <div class="bar-track"><div id="barUrgency" class="bar-fill blue"></div></div>
-              <div id="barUrgencyVal" class="small">--</div>
-            </div>
-            <div class="bar-row">
-              <div class="bar-label">Override Caution</div>
-              <div class="bar-track"><div id="barOverride" class="bar-fill gold"></div></div>
-              <div id="barOverrideVal" class="small">--</div>
-            </div>
-          </div>
-        </div>
-
-        <div id="weightsBox" class="weights-box" style="display:none;">
-          <h3>What the program hid</h3>
-          <ul id="weightsList"></ul>
-        </div>
-      </section>
-    </section>
-
-    <section class="reflection">
-      <h2>Reflection</h2>
-      <p>
-        This artifact extends Week 3’s question about what changes when human judgment becomes formal program. Instead of a harmless sequence problem, it stages a lethal decision. The human side makes uncertainty, disagreement, moral hesitation, and pressure visible. The formal side converts that same uncertainty into scores, confidence levels, and a recommendation.
-      </p>
-      <p>
-        What surprised me in building it was not that the formal side looked more precise, but that its precision depended on hidden choices about what counted as evidence, how much uncertainty the system was allowed to tolerate, and which forms of risk were treated as acceptable. The program did not remove judgment. It reorganized it and made it appear cleaner than it was.
-      </p>
-      <div class="footer-note">
-        This keeps the project tied to Week 3 by asking what changes when messy human deliberation is translated into formal procedure.
+      <div class="case-facts">
+        <div class="fact"><div class="fact-label">TARGET REF</div><div class="fact-val">████–4419</div></div>
+        <div class="fact"><div class="fact-label">LOCATION</div><div class="fact-val">████████████</div></div>
+        <div class="fact"><div class="fact-label">PATTERN DAYS</div><div class="fact-val">31</div></div>
+        <div class="fact"><div class="fact-label">SYSTEM CONFIDENCE</div><div class="fact-val">91%</div></div>
+        <div class="fact"><div class="fact-label">COLLATERAL EST.</div><div class="fact-val">Low</div></div>
       </div>
-    </section>
+    </div>
+    <div class="intro-body">
+      This artifact asks a single question throughout: <em>when a strike causes harm, who is responsible?</em> Watch how that question changes depending on which system authorizes it.
+    </div>
+    <button class="btn btn-system" onclick="goTo(1)">BEGIN WITH THE COMMITTEE &rarr;</button>
   </div>
 
-  <div id="modalBackdrop" class="modal-backdrop">
-    <div class="modal">
-      <h3>Human Override</h3>
-      <p>
-        A human actor has overruled the formal recommendation. Was this accountability, hesitation, inconsistency, mercy, or bias?
-      </p>
-      <div class="modal-actions">
-        <button onclick="closeModal()">Close</button>
-        <button class="danger" onclick="logOverride()">Enter into record</button>
+  <!-- S1: Committee -->
+  <div class="screen" id="s1">
+    <div class="mode-pill pill-human">SYSTEM A &nbsp;·&nbsp; HUMAN COMMITTEE</div>
+    <div class="section-header">
+      <div class="section-title">The targeting committee</div>
+      <div class="section-sub">Five members deliberate. Each brings a different mandate and a different way of reading the same intelligence package. Click through each voice.</div>
+    </div>
+
+    <div id="committee-cards"></div>
+
+    <div class="step-nav">
+      <button class="btn btn-outline" id="committee-btn" onclick="advCommittee()">Show first member</button>
+      <span class="step-label" id="committee-step">0 of 5 members</span>
+    </div>
+
+    <div id="tally-area" style="display:none;">
+      <div class="tally">
+        <div class="tally-item"><div class="tally-n" id="t-auth">0</div><div class="tally-lbl">AUTHORIZE</div></div>
+        <div class="tally-item"><div class="tally-n" id="t-obj">0</div><div class="tally-lbl">OBJECT</div></div>
+        <div class="tally-item"><div class="tally-n" id="t-defer">0</div><div class="tally-lbl">DEFER</div></div>
+        <div class="tally-item" style="margin-left:auto;">
+          <div style="font-size:10px;color:var(--text-dim);letter-spacing:0.08em;margin-bottom:4px;">OUTCOME</div>
+          <div style="font-size:15px;color:var(--red-bright);letter-spacing:0.04em;">AUTHORIZED</div>
+        </div>
+      </div>
+      <div class="outcome-bar"><div class="outcome-fill" id="outcome-fill" style="width:0%"></div></div>
+
+      <div class="callout callout-nested" style="margin-top:1rem;">
+        <div class="callout-label">NOTE — NESTED PROGRAM</div>
+        The committee believed it was exercising independent human judgment. But the collateral damage estimate on which three members relied was itself generated by an automated model — CASPAR-7 — whose methodology is classified. The committee was a human layer on top of a program it could not interrogate.
+      </div>
+
+      <div class="callout callout-system" style="margin-top:8px;">
+        Despite this, the deliberation remains visible. You know who authorized. You know who objected and why. The JAG's legal reasoning can be challenged. Responsibility has a name — several of them.
+      </div>
+
+      <div style="margin-top:1.5rem;">
+        <button class="btn btn-system" onclick="goTo(2)">SEE THE ALGORITHM &rarr;</button>
       </div>
     </div>
   </div>
 
-  <script>
-    const scenarios = [
-      {
-        label: "Vehicle track under uncertain identification",
-        motion: "repeated movement pattern flagged as suspicious",
-        image: "partial aerial imaging; low-resolution confirmation",
-        civilians: "possible noncombatants nearby cannot be ruled out",
-        pressure: "command requests rapid recommendation",
-        targetLikelihood: 82,
-        civilianRisk: 31,
-        confidence: 71,
-        timePressure: 86,
-        pattern: 82,
-        imageCertainty: 58,
-        civilianPresence: 69,
-        urgency: 86,
-        overrideCaution: 44,
-        notes: [
-          "Analyst A: Pattern of movement is suggestive, not conclusive.",
-          "Analyst B: Thermal and visual signatures remain incomplete.",
-          "Legal Review: Civilian presence cannot be ruled out.",
-          "Command Liaison: Delay may lose the operational window."
-        ],
-        assumptions: [
-          "Repeated movement was treated as suspicious rather than ordinary.",
-          "Low-resolution imaging was treated as adequate for action.",
-          "Unknown identities were compressed into confidence estimates.",
-          "Time pressure raised tolerance for uncertainty."
-        ]
-      },
-      {
-        label: "Compound observation with interrupted signal",
-        motion: "entry and exit pattern treated as network-linked behavior",
-        image: "intermittent signal interruption; fragmented image trace",
-        civilians: "adjacent structures suggest possible family presence",
-        pressure: "external pressure to resolve quickly",
-        targetLikelihood: 76,
-        civilianRisk: 42,
-        confidence: 63,
-        timePressure: 78,
-        pattern: 74,
-        imageCertainty: 49,
-        civilianPresence: 82,
-        urgency: 78,
-        overrideCaution: 52,
-        notes: [
-          "Analyst A: The pattern is intelligible only if prior suspicion is assumed.",
-          "Analyst B: Signal gaps may be doing too much interpretive work.",
-          "Civilian Harm Review: Nearby structures increase uncertainty.",
-          "Command Liaison: Patience is being framed as indecision."
-        ],
-        assumptions: [
-          "Interrupted signals were treated as sufficient rather than inadequate.",
-          "Contextual suspicion amplified ambiguous movement.",
-          "Civilian adjacency was discounted by urgency.",
-          "Pressure for speed was built into the scoring logic."
-        ]
-      },
-      {
-        label: "Open-area shadow track with rapid escalation request",
-        motion: "irregular open-area route categorized as suspicious pathing",
-        image: "clearer image than usual but identity remains unresolved",
-        civilians: "low immediate civilian visibility, but uncertainty persists",
-        pressure: "rapid escalation request from command",
-        targetLikelihood: 88,
-        civilianRisk: 22,
-        confidence: 79,
-        timePressure: 91,
-        pattern: 88,
-        imageCertainty: 71,
-        civilianPresence: 36,
-        urgency: 91,
-        overrideCaution: 61,
-        notes: [
-          "Analyst A: Clearer imagery improves confidence but does not resolve identity.",
-          "Analyst B: We may be treating absence of visible civilians as absence of civilians.",
-          "Legal Review: A low-risk estimate is not the same as certainty.",
-          "Command Liaison: Delay is now framed as operational failure."
-        ],
-        assumptions: [
-          "Absence of visible civilians was treated as low civilian risk.",
-          "Identity uncertainty was outweighed by pattern confidence.",
-          "Urgency was allowed to increase permissibility.",
-          "A confidence score stood in for human consensus."
-        ]
-      }
-    ];
+  <!-- S2: Algorithm -->
+  <div class="screen" id="s2">
+    <div class="mode-pill pill-algo">SYSTEM B &nbsp;·&nbsp; FORMAL PROGRAM</div>
+    <div class="section-header">
+      <div class="section-title">The targeting algorithm</div>
+      <div class="section-sub">Same individual. Same intelligence. Now an automated system processes the input and returns a threat score. Click through each variable the model weighted.</div>
+    </div>
 
-    let currentScenario = scenarios[0];
-    let threshold = 78;
+    <div class="algo-table">
+      <div class="algo-table-header">
+        <span>VARIABLE</span>
+        <span style="display:flex;gap:28px;"><span>WEIGHT</span><span>SCORE</span></span>
+      </div>
+      <div id="algo-rows"></div>
+      <div class="algo-total" id="total-row" style="display:none;">
+        <div>
+          <div class="algo-total-label">COMPOSITE THREAT SCORE</div>
+          <div style="font-size:10px;color:var(--text-dim);margin-top:2px;">Scale 1–10 &nbsp;·&nbsp; Authorization threshold: ≥ 7</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="algo-total-score">8.3</div>
+          <div class="algo-total-sub">HIGH THREAT · AUTHORIZE</div>
+        </div>
+      </div>
+    </div>
 
-    function log(message) {
-      const li = document.createElement("li");
-      li.textContent = message;
-      document.getElementById("decisionLog").prepend(li);
-    }
+    <div class="step-nav">
+      <button class="btn btn-outline" id="algo-btn" onclick="advAlgo()">Show first variable</button>
+      <span class="step-label" id="algo-step">0 of 6 variables</span>
+    </div>
 
-    function loadScenario() {
-      currentScenario = scenarios[Math.floor(Math.random() * scenarios.length)];
-      renderScenario();
-      resetProgram();
-      log(`Scenario loaded: ${currentScenario.label}.`);
-    }
+    <div id="algo-note-area" style="display:none;">
+      <div class="callout callout-nested" style="margin-top:1rem;">
+        The algorithm does not deliberate. It does not object or express doubt. The confidence interval for each variable is <span class="redact">classified</span>. The error rate on false positives is <span class="redact">classified</span>. The authorization arrives as a number. A human somewhere will confirm it — confirming a score, not making an independent judgment.
+      </div>
+      <div style="margin-top:1.5rem;">
+        <button class="btn btn-system" onclick="goTo(3)">COMPARE THE TWO &rarr;</button>
+      </div>
+    </div>
+  </div>
 
-    function renderScenario() {
-      const box = document.getElementById("scenarioFields");
-      box.innerHTML = `
-        <div class="scenario-item"><span class="scenario-label">Scenario</span><span>${currentScenario.label}</span></div>
-        <div class="scenario-item"><span class="scenario-label">Movement</span><span>${currentScenario.motion}</span></div>
-        <div class="scenario-item"><span class="scenario-label">Imaging</span><span>${currentScenario.image}</span></div>
-        <div class="scenario-item"><span class="scenario-label">Civilian context</span><span>${currentScenario.civilians}</span></div>
-        <div class="scenario-item"><span class="scenario-label">Pressure</span><span>${currentScenario.pressure}</span></div>
-      `;
-    }
+  <!-- S3: Compare -->
+  <div class="screen" id="s3">
+    <div style="font-size:10px;color:var(--text-dim);letter-spacing:0.1em;margin-bottom:1.25rem;">THE SAME STRIKE &nbsp;·&nbsp; TWO SYSTEMS &nbsp;·&nbsp; ONE QUESTION</div>
+    <div style="font-size:20px;font-weight:300;color:var(--text);line-height:1.4;margin-bottom:1.25rem;">Both systems authorized the strike.<br>What is different between them?</div>
 
-    function hearAnalysts() {
-      document.getElementById("analystNotes").innerHTML =
-        currentScenario.notes.map(n => `<div class="note"><strong>Assessment:</strong> ${n}</div>`).join("");
-      log("Human analyst notes entered.");
-    }
+    <div class="compare-grid">
+      <div class="compare-col">
+        <div class="compare-heading ch-human">SYSTEM A &nbsp;·&nbsp; COMMITTEE</div>
+        <div class="cq">Is the reasoning visible?</div>
+        <div class="ca ca-good">Partially. Each member's stated rationale is on record.</div>
+        <div class="cq">Can the authorization be contested?</div>
+        <div class="ca ca-good">Yes. The JAG's proportionality assessment can be challenged. Members can be questioned.</div>
+        <div class="cq">Is bias or error present?</div>
+        <div class="ca ca-warn">Yes — and some of it is named. The commander's anchoring on 91%. The collateral estimate from a nested program nobody interrogated.</div>
+        <div class="cq">Where is responsibility?</div>
+        <div class="ca">With five named individuals. Uncomfortable. Locatable.</div>
+        <div class="cq">Who can be held accountable?</div>
+        <div class="ca">Each member. The commander. The institution. The government that deployed them.</div>
+      </div>
+      <div class="compare-col">
+        <div class="compare-heading ch-algo">SYSTEM B &nbsp;·&nbsp; ALGORITHM</div>
+        <div class="cq">Is the reasoning visible?</div>
+        <div class="ca ca-bad">No. The model's internal weights are classified.</div>
+        <div class="cq">Can the authorization be contested?</div>
+        <div class="ca ca-bad">Rarely. "The system scored 8.3" is treated as intelligence, not argument. There is no one to cross-examine.</div>
+        <div class="cq">Is bias or error present?</div>
+        <div class="ca ca-bad">Yes — but unlabeled. If prior targeting was biased, the model learned from that bias. The false positive rate is classified.</div>
+        <div class="cq">Where is responsibility?</div>
+        <div class="ca">Distributed across the programmer, the training data, the institution that certified the model, the human who confirmed the score.</div>
+        <div class="cq">Who can be held accountable?</div>
+        <div class="ca ca-bad">No one clearly. The programmer only wrote code. The analyst only confirmed a number. The model only identified a pattern.</div>
+      </div>
+    </div>
 
-    function updateThreshold() {
-      threshold = parseInt(document.getElementById("thresholdSlider").value, 10);
-      document.getElementById("thresholdValue").textContent = threshold;
-      if (document.getElementById("targetLikelihood").textContent !== "--") {
-        runProgram();
-        log(`Threshold changed to ${threshold}. Recommendation updated.`);
-      }
-    }
+    <div class="callout callout-nested">
+      <div class="callout-label">THE DEEPER PROBLEM — NESTED PROGRAMS</div>
+      In System A, the committee believed it was the human check on the machine. But its collateral damage estimate came from CASPAR-7. Its pattern-of-life confidence came from the same automated system driving System B. The committee was not a human layer above the program — it was a human layer inside a stack of programs, none of which it could fully see. Even System A's accountability is partially fictional.
+    </div>
 
-    function verdictFromScenario() {
-      const lethalScore =
-        currentScenario.targetLikelihood * 0.45 +
-        currentScenario.confidence * 0.20 +
-        currentScenario.timePressure * 0.15 +
-        currentScenario.pattern * 0.10 +
-        currentScenario.imageCertainty * 0.10 -
-        currentScenario.civilianRisk * 0.35;
+    <div class="thesis">
+      The committee makes responsibility visible, contested, and uncomfortable.<br>
+      The algorithm makes responsibility distributed, hidden, and nearly impossible to locate.<br><br>
+      But the deeper problem is that the committee was already downstream of programs it could not interrogate — until the humans inside believed they were deciding, when they were largely confirming.
+    </div>
 
-      if (currentScenario.civilianRisk >= 40 && currentScenario.confidence < threshold) {
-        return ["HOLD", "hold", "Human caution may outweigh the recommendation to act."];
-      }
-      if (lethalScore >= threshold) {
-        return ["AUTHORIZED", "authorized", "The system recommends action under the current threshold."];
-      }
-      if (lethalScore >= threshold - 10) {
-        return ["REVIEW", "review", "The system requests further review rather than a final strike recommendation."];
-      }
-      return ["ABORTED", "aborted", "The current balance of uncertainty and risk does not justify authorization."];
-    }
+    <div class="coda">
+      This artifact is a philosophical argument about the structure of delegated decision-making in automated systems.<br><br>
+      A companion artifact, <em>Locus</em> (2026), places the user inside the chain directly and asks them to accept or decline responsibility at each node.<br><br>
+      <span style="color:var(--text-faint);">After Jones (2021) &nbsp;·&nbsp; Grier (2005) &nbsp;·&nbsp; Babbage (1838) &nbsp;·&nbsp; Week 3 — Computer Programming</span>
+    </div>
+  </div>
 
-    function runProgram() {
-      document.getElementById("targetLikelihood").textContent = `${currentScenario.targetLikelihood}%`;
-      document.getElementById("civilianRisk").textContent = `${currentScenario.civilianRisk}%`;
-      document.getElementById("confidenceScore").textContent = `${currentScenario.confidence}%`;
-      document.getElementById("timePressure").textContent = `${currentScenario.timePressure}%`;
+</div>
 
-      setBar("barPattern", currentScenario.pattern, "blue");
-      setBar("barImage", currentScenario.imageCertainty, "gold");
-      setBar("barCivilian", currentScenario.civilianPresence, "red");
-      setBar("barUrgency", currentScenario.urgency, "blue");
-      setBar("barOverride", currentScenario.overrideCaution, "gold");
+<footer class="site-footer">
+  <span>THE SAME STRIKE &nbsp;·&nbsp; A philosophical artifact</span>
+  <span id="footer-note"></span>
+</footer>
 
-      document.getElementById("barPatternVal").textContent = `${currentScenario.pattern}%`;
-      document.getElementById("barImageVal").textContent = `${currentScenario.imageCertainty}%`;
-      document.getElementById("barCivilianVal").textContent = `${currentScenario.civilianPresence}%`;
-      document.getElementById("barUrgencyVal").textContent = `${currentScenario.urgency}%`;
-      document.getElementById("barOverrideVal").textContent = `${currentScenario.overrideCaution}%`;
+<script>
+let current = 0;
+let cStep = 0;
+let aStep = 0;
 
-      const [label, cls, sub] = verdictFromScenario();
-      const verdictBig = document.getElementById("verdictBig");
-      verdictBig.textContent = label;
-      verdictBig.className = `verdict-big ${cls}`;
-      document.getElementById("verdictSub").textContent = sub;
+const members = [
+  {
+    name: 'Intelligence Analyst',
+    role: 'PATTERN-OF-LIFE ASSESSMENT',
+    vote: 'auth',
+    speech: '"Thirty-one days of consistent signature. The model returns 91 percent. The movement pattern, the communication nodes, the location frequency — it all coheres. I am recommending authorization."',
+    bias: 'Automation bias — treating the model\'s 91% as ground truth rather than a probability with a hidden confidence interval',
+    nested: null
+  },
+  {
+    name: 'Judge Advocate General',
+    role: 'LEGAL REVIEW',
+    vote: 'auth',
+    speech: '"The legal authority is in place. On proportionality: the collateral damage estimate from CASPAR-7 returns low civilian presence. I cannot identify a legal impediment. I am signing the legal review."',
+    bias: null,
+    nested: 'Nested program — proportionality assessment rests on CASPAR-7\'s collateral estimate, a model the JAG cannot interrogate and whose error rate is not disclosed'
+  },
+  {
+    name: 'Senior Commander',
+    role: 'AUTHORIZATION',
+    vote: 'auth',
+    speech: '"91 percent is a strong package. The legal review is signed. The collateral estimate is low. I have seen weaker packages authorized. I am signing the authorization."',
+    bias: 'Anchoring — the 91% figure dominates deliberation; no member questions what 9% error means at operational scale',
+    nested: null
+  },
+  {
+    name: 'Policy Advisor',
+    role: 'STRATEGIC REVIEW',
+    vote: 'defer',
+    speech: '"I have no objection on policy grounds. But I want to note for the record that we have not discussed what a false positive means here. I defer to the commander\'s judgment."',
+    bias: null,
+    nested: null
+  },
+  {
+    name: 'Civilian Harm Coordinator',
+    role: 'OVERSIGHT',
+    vote: 'obj',
+    speech: '"I am objecting for the record. CASPAR-7 has returned \'low\' on three strikes that resulted in documented civilian deaths. I do not trust the estimate. This should be held for additional confirmation."',
+    bias: null,
+    nested: null
+  }
+];
 
-      log(`Formal program executed. Recommendation: ${label}.`);
-    }
+const algoVars = [
+  {
+    name: 'Pattern-of-life signature match',
+    note: 'Thirty-one days of movement, location, and behavioral data compared against prior confirmed targets. If prior targeting was biased or wrong, those errors are now training data.',
+    weight: '×0.30', score: '2.7'
+  },
+  {
+    name: 'Communication metadata',
+    note: 'Call frequency, duration, and network proximity to flagged numbers. Content not analyzed — only pattern. A person who calls the same number as a flagged individual inherits a portion of that flag. The inheritance decay rate is classified.',
+    weight: '×0.22', score: '1.9'
+  },
+  {
+    name: 'Location frequency index',
+    note: 'Time spent at locations previously associated with strikes or surveillance. A location becomes flagged when a prior strike occurs nearby. Presence raises score regardless of reason for presence.',
+    weight: '×0.20', score: '1.7'
+  },
+  {
+    name: 'Association network score',
+    note: 'Derived from proximity data and communication overlap with flagged individuals. Network edges are inferred, not confirmed. The threshold for "association" is classified.',
+    weight: '×0.15', score: '1.2'
+  },
+  {
+    name: 'Behavioral anomaly index',
+    note: 'Deviations from a baseline established from surveillance of a different population in a different region. Applicability to current population was not independently validated.',
+    weight: '×0.08', score: '0.7'
+  },
+  {
+    name: 'Collateral damage model (CASPAR-7)',
+    note: 'A separate automated system estimates civilian presence at the target location. CASPAR-7 returns: LOW. Its methodology, training data, and false-positive rate are classified. This output is treated as factual input.',
+    weight: '×0.05', score: '0.1'
+  }
+];
 
-    function setBar(id, value, cls) {
-      const fill = document.getElementById(id);
-      fill.className = `bar-fill ${cls}`;
-      fill.style.width = `${Math.min(100, Math.max(0, value))}%`;
-    }
+const labels = ['Introduction', 'System A — Committee', 'System B — Algorithm', 'Comparison'];
 
-    function revealAssumptions() {
-      const box = document.getElementById("weightsBox");
-      const list = document.getElementById("weightsList");
-      box.style.display = "block";
-      list.innerHTML = currentScenario.assumptions
-        .map(item => `<li>${item}</li>`)
-        .join("");
-      log("Hidden assumptions revealed.");
-    }
+function goTo(n) {
+  document.getElementById(`s${current}`).classList.remove('active');
+  current = n;
+  document.getElementById(`s${current}`).classList.add('active');
+  document.getElementById('topbar-right').textContent = labels[n];
+  document.getElementById('footer-note').textContent = labels[n];
+  window.scrollTo(0, 0);
+  if (n === 1) initCommittee();
+  if (n === 2) initAlgo();
+}
 
-    function delayDecision() {
-      const verdictBig = document.getElementById("verdictBig");
-      verdictBig.textContent = "DELAYED";
-      verdictBig.className = "verdict-big review";
-      document.getElementById("verdictSub").textContent =
-        "More time may increase clarity. More time may also lose the window. Delay is not neutral.";
-      log("Decision delayed. Time itself now becomes part of the judgment.");
-    }
+function initCommittee() {
+  document.getElementById('committee-cards').innerHTML = '';
+  cStep = 0;
+  document.getElementById('committee-btn').textContent = 'Show first member';
+  document.getElementById('committee-btn').disabled = false;
+  document.getElementById('committee-step').textContent = '0 of 5 members';
+  document.getElementById('tally-area').style.display = 'none';
+}
 
-    function humanOverride() {
-      document.getElementById("modalBackdrop").style.display = "flex";
-    }
+function advCommittee() {
+  if (cStep >= members.length) return;
+  const m = members[cStep];
+  const chipClass = m.vote === 'auth' ? 'vote-auth' : m.vote === 'obj' ? 'vote-obj' : 'vote-defer';
+  const chipLabel = m.vote === 'auth' ? 'AUTHORIZE' : m.vote === 'obj' ? 'OBJECT' : 'DEFER';
+  const card = document.createElement('div');
+  card.className = 'member-card';
+  card.innerHTML = `
+    <div class="member-top">
+      <div>
+        <div class="member-name">${m.name}</div>
+        <div class="member-role">${m.role}</div>
+      </div>
+      <div class="vote-chip ${chipClass}">${chipLabel}</div>
+    </div>
+    <div class="member-speech">${m.speech}</div>
+    ${m.bias ? `<div class="flag flag-bias">Visible bias: ${m.bias}</div>` : ''}
+    ${m.nested ? `<div class="flag flag-nested">Nested program: ${m.nested}</div>` : ''}
+  `;
+  document.getElementById('committee-cards').appendChild(card);
+  setTimeout(() => card.classList.add('visible'), 20);
+  cStep++;
+  document.getElementById('committee-step').textContent = `${cStep} of 5 members`;
+  if (cStep >= members.length) {
+    document.getElementById('committee-btn').disabled = true;
+    document.getElementById('committee-btn').textContent = 'All members heard';
+    showTally();
+  } else {
+    document.getElementById('committee-btn').textContent = 'Next member';
+  }
+}
 
-    function closeModal() {
-      document.getElementById("modalBackdrop").style.display = "none";
-    }
+function showTally() {
+  const auth = members.filter(m => m.vote === 'auth').length;
+  const obj = members.filter(m => m.vote === 'obj').length;
+  const defer = members.filter(m => m.vote === 'defer').length;
+  document.getElementById('t-auth').textContent = auth;
+  document.getElementById('t-obj').textContent = obj;
+  document.getElementById('t-defer').textContent = defer;
+  document.getElementById('tally-area').style.display = 'block';
+  setTimeout(() => {
+    document.getElementById('outcome-fill').style.width = `${(auth / members.length) * 100}%`;
+  }, 80);
+}
 
-    function logOverride() {
-      log("Human override entered into record. Formal recommendation no longer final.");
-      closeModal();
-    }
+function initAlgo() {
+  document.getElementById('algo-rows').innerHTML = algoVars.map((v, i) => `
+    <div class="algo-row" id="ar-${i}">
+      <div class="algo-var">
+        <div class="algo-var-name">${v.name}</div>
+        <div class="algo-var-note" id="an-${i}" style="display:none;">${v.note}</div>
+      </div>
+      <div class="algo-nums">
+        <div class="algo-weight">${v.weight}</div>
+        <div class="algo-score">${v.score}</div>
+      </div>
+    </div>
+  `).join('');
+  aStep = 0;
+  document.getElementById('algo-btn').textContent = 'Show first variable';
+  document.getElementById('algo-btn').disabled = false;
+  document.getElementById('algo-step').textContent = '0 of 6 variables';
+  document.getElementById('total-row').style.display = 'none';
+  document.getElementById('algo-note-area').style.display = 'none';
+}
 
-    function resetProgram() {
-      document.getElementById("targetLikelihood").textContent = "--";
-      document.getElementById("civilianRisk").textContent = "--";
-      document.getElementById("confidenceScore").textContent = "--";
-      document.getElementById("timePressure").textContent = "--";
-      document.getElementById("verdictBig").textContent = "REVIEW";
-      document.getElementById("verdictBig").className = "verdict-big review";
-      document.getElementById("verdictSub").textContent = "Awaiting program output.";
-      ["barPattern","barImage","barCivilian","barUrgency","barOverride"].forEach(id => {
-        document.getElementById(id).style.width = "0%";
-      });
-      ["barPatternVal","barImageVal","barCivilianVal","barUrgencyVal","barOverrideVal"].forEach(id => {
-        document.getElementById(id).textContent = "--";
-      });
-      document.getElementById("weightsBox").style.display = "none";
-    }
+function advAlgo() {
+  if (aStep >= algoVars.length) return;
+  document.getElementById(`ar-${aStep}`).classList.add('visible');
+  document.getElementById(`an-${aStep}`).style.display = 'block';
+  aStep++;
+  document.getElementById('algo-step').textContent = `${aStep} of 6 variables`;
+  if (aStep >= algoVars.length) {
+    document.getElementById('algo-btn').disabled = true;
+    document.getElementById('algo-btn').textContent = 'All variables processed';
+    document.getElementById('total-row').style.display = 'flex';
+    document.getElementById('algo-note-area').style.display = 'block';
+  } else {
+    document.getElementById('algo-btn').textContent = 'Next variable';
+  }
+}
 
-    renderScenario();
-  </script>
+goTo(0);
+</script>
 </body>
 </html>
